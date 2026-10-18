@@ -122,6 +122,9 @@ button{font:inherit;border:0;border-radius:10px;padding:13px 18px;cursor:pointer
 .arrive small{display:block;font-size:14px;font-weight:500;color:var(--khaki)}
 @keyframes arrive{0%{transform:translate(-50%,-50%) scale(.6)}15%{transform:translate(-50%,-50%) scale(1.08)}25%,80%{transform:translate(-50%,-50%) scale(1)}100%{transform:translate(-50%,-80%) scale(.95);visibility:hidden}}
 .ico .sp{width:32px;height:32px}
+.numgrp h3 .supply{font-size:13px;vertical-align:2px}
+.numgrp h3 .supply .sp{width:22px;height:22px}
+.sdesc{font-size:14px;color:var(--muted);margin:-2px 0 10px}
 .supply{display:inline-flex;align-items:center;gap:4px;margin-left:10px;padding:1px 10px 1px 4px;border-radius:999px;background:#f7f1e8;border:1px solid #e6d8c3;color:var(--khaki);font-size:14px;font-weight:700;vertical-align:4px}
 .supply .sp{width:24px;height:24px}
 .supply.bump{animation:bump .35s ease}
@@ -247,10 +250,10 @@ const GATES = [
 ];
 const TEAM = `<div class="team"><b>共同設計</b><span>律師　陳品攸</span><span>CFP理財規劃顧問　王春雄</span><span>地政士　吳翊辰</span></div>`;
 const GROUPS = {p2:[
-  {h:"遺囑與財產登記",ids:["7","8","9"]},
-  {h:"家庭變化與照顧",ids:["10","11","15"]},
-  {h:"收支與退休",ids:["12","13","16"]},
-  {h:"資產與負債",ids:["14","17"]}
+  {h:"遺囑與財產登記",ids:["7","8","9"],s:"log"},
+  {h:"家庭變化與照顧",ids:["10","11","15"],s:"med"},
+  {h:"收支與退休",ids:["12","13","16"],s:"bread"},
+  {h:"資產與負債",ids:["14","17"],s:"water"}
 ], A:[
   {h:"登記與持有",ids:["A1","A2","A3","A10"]},
   {h:"移轉與繳稅",ids:["A4","A5","A6","A9"]},
@@ -268,20 +271,27 @@ const ICON = {
   wish:'<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>',
   boat:'<path d="M3 16h18l-2.5 4h-13z"/><path d="M12 3v13"/><path d="M12 4l6 9h-6"/>'
 };
-const svg = k=>SUP[k] ? SUP[k].svg : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg>`;
-/* 出航物資：每一區一種，勾一項拿一個；畫法跟小船一樣用品牌色塊填色 */
+const svg = k=>SUP[k==="p2"?"log":k] ? SUP[k==="p2"?"log":k].svg : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg>`;
+/* 出航物資：每一區一種（財產安排那區照四個小組各一種），勾一項拿一個；畫法跟小船一樣用品牌色塊填色
+   u＝量詞，d＝給讀者看的說明 */
 const S = b=>`<svg class="sp" viewBox="0 0 48 48">${b}</svg>`;
 const SUP = {
-  p1:{n:"羅盤",svg:S(`<circle cx="24" cy="6" r="3" fill="none" stroke="#6a5540" stroke-width="2"/><circle cx="24" cy="26" r="18" fill="#c9a96b"/><circle cx="24" cy="26" r="14" fill="#fffdfa" stroke="#6a5540" stroke-width="1.4"/><path d="M24 14v2.5M24 35.5V38M12 26h2.5M33.5 26H36" stroke="#d9c7ab" stroke-width="1.6" stroke-linecap="round"/><path d="M24 15l4.2 11h-8.4z" fill="#1a5070"/><path d="M24 37l-4.2-11h8.4z" fill="#d9c7ab"/><circle cx="24" cy="26" r="2.4" fill="#6a5540"/>`)},
-  p2:{n:"航海日誌",svg:S(`<path d="M37 12h3.5v28H37" fill="#fffdfa" stroke="#d9c7ab" stroke-width="1.2"/><rect x="9" y="8" width="29" height="34" rx="3" fill="#1a5070"/><rect x="9" y="8" width="6" height="34" rx="2" fill="#6a5540"/><rect x="19" y="14" width="14" height="4" rx="2" fill="#c9a96b"/><path d="M19 26c2.3-2.4 4.7-2.4 7 0s4.7 2.4 7 0M19 32c2.3-2.4 4.7-2.4 7 0s4.7 2.4 7 0" stroke="#fffdfa" stroke-width="1.6" fill="none" stroke-linecap="round"/>`)},
-  A:{n:"錨",svg:S(`<circle cx="24" cy="9" r="4.2" fill="none" stroke="#6a5540" stroke-width="2.8"/><path d="M24 13.5V39" stroke="#1a5070" stroke-width="4.2" stroke-linecap="round"/><path d="M15.5 20h17" stroke="#1a5070" stroke-width="3.6" stroke-linecap="round"/><path d="M10 29c1.5 7 7 11 14 11s12.5-4 14-11" fill="none" stroke="#1a5070" stroke-width="3.8" stroke-linecap="round"/><path d="M6.5 31.5l3-6 5 4.2zM41.5 31.5l-3-6-5 4.2z" fill="#1a5070"/>`)},
-  B:{n:"船舵",svg:S(`<path d="M24 4v40M4 24h40M9.9 9.9l28.2 28.2M38.1 9.9L9.9 38.1" stroke="#6a5540" stroke-width="3.2" stroke-linecap="round"/><circle cx="24" cy="24" r="13" fill="none" stroke="#6a5540" stroke-width="4.5"/><circle cx="24" cy="24" r="13" fill="none" stroke="#c9a96b" stroke-width="1.2"/><circle cx="24" cy="24" r="5" fill="#1a5070"/><circle cx="24" cy="24" r="1.8" fill="#c9a96b"/>`)},
-  C:{n:"救生圈",svg:S(`<circle cx="24" cy="24" r="15" fill="none" stroke="#fffdfa" stroke-width="10"/><circle cx="24" cy="24" r="15" fill="none" stroke="#1a5070" stroke-width="10" stroke-dasharray="11.78 11.78" transform="rotate(-22 24 24)"/><circle cx="24" cy="24" r="20" fill="none" stroke="#6a5540" stroke-width="1.2"/><circle cx="24" cy="24" r="10" fill="none" stroke="#6a5540" stroke-width="1.2"/><path d="M24 2.5v4M24 41.5v4M2.5 24h4M41.5 24h4" stroke="#6a5540" stroke-width="2.4" stroke-linecap="round"/>`)},
-  D:{n:"望遠鏡",svg:S(`<path d="M21 31l-5.5 12M27 31l5.5 12M24 31v12" stroke="#6a5540" stroke-width="2.2" stroke-linecap="round"/><g transform="rotate(-24 24 22)"><rect x="5" y="18" width="13" height="8" rx="2" fill="#6a5540"/><rect x="17" y="16" width="14" height="12" rx="2" fill="#1a5070"/><rect x="30" y="13.5" width="12" height="17" rx="3" fill="#1a5070"/><rect x="16.5" y="16" width="2.6" height="12" fill="#c9a96b"/><rect x="30" y="13.5" width="3" height="17" fill="#c9a96b"/><rect x="40" y="15.5" width="2" height="13" rx="1" fill="#d3e2ea"/></g>`)},
-  nums:{n:"藏寶箱",svg:S(`<circle cx="18" cy="17" r="4.5" fill="#c9a96b" stroke="#6a5540"/><circle cx="27" cy="14.5" r="4.5" fill="#e3c98f" stroke="#6a5540"/><circle cx="33" cy="18" r="3.8" fill="#c9a96b" stroke="#6a5540"/><path d="M7 23c0-7 6-10.5 17-10.5S41 16 41 23z" fill="#6a5540"/><rect x="7" y="22" width="34" height="18" rx="2.5" fill="#8a6e52"/><path d="M13 13.5V40M35 13.5V40" stroke="#1a5070" stroke-width="3"/><rect x="7" y="22" width="34" height="3.2" fill="#1a5070"/><rect x="20.5" y="21" width="7" height="9" rx="2" fill="#c9a96b" stroke="#6a5540"/><circle cx="24" cy="25.5" r="1.2" fill="#6a5540"/>`)}
+  p1:{n:"羅盤",u:"個",d:"決定財產往哪個方向、給哪些人",svg:S(`<circle cx="24" cy="6" r="3" fill="none" stroke="#6a5540" stroke-width="2"/><circle cx="24" cy="26" r="18" fill="#c9a96b"/><circle cx="24" cy="26" r="14" fill="#fffdfa" stroke="#6a5540" stroke-width="1.4"/><path d="M24 14v2.5M24 35.5V38M12 26h2.5M33.5 26H36" stroke="#d9c7ab" stroke-width="1.6" stroke-linecap="round"/><path d="M24 15l4.2 11h-8.4z" fill="#1a5070"/><path d="M24 37l-4.2-11h8.4z" fill="#d9c7ab"/><circle cx="24" cy="26" r="2.4" fill="#6a5540"/>`)},
+  med:{n:"醫藥箱",u:"個",d:"家人生病、需要照顧時用得到",svg:S(`<path d="M18 13V9.5A2.5 2.5 0 0120.5 7h7A2.5 2.5 0 0130 9.5V13" fill="none" stroke="#6a5540" stroke-width="2.8"/><rect x="6" y="13" width="36" height="27" rx="4" fill="#fffdfa" stroke="#6a5540" stroke-width="1.8"/><rect x="6" y="34" width="36" height="6" rx="3" fill="#c9a96b"/><path d="M21 16.5h6v5h5v6h-5v5h-6v-5h-5v-6h5z" fill="#1a5070"/>`)},
+  bread:{n:"麵包",u:"個",d:"每個月的生活費，退休後也要夠吃",svg:S(`<path d="M9 31c-3.5-1-5-5-3-8.5C9 16 16 12.5 24 12.5S39 16 42 22.5c2 3.5.5 7.5-3 8.5v5.5a3 3 0 01-3 3H12a3 3 0 01-3-3z" fill="#c9a96b" stroke="#6a5540" stroke-width="1.8"/><path d="M9 31h30" stroke="#6a5540" stroke-width="1.2" opacity=".5"/><path d="M15.5 19l3.5 6M23 16.5l3.5 6.5M30.5 18l3.5 6" stroke="#fffdfa" stroke-width="2.4" stroke-linecap="round"/>`)},
+  water:{n:"淡水桶",u:"個",d:"船上存了多少、用掉多少，要算清楚",svg:S(`<path d="M13 8h22c3 5.5 4.5 10.5 4.5 16S38 34.5 35 40H13c-3-5.5-4.5-10.5-4.5-16S10 13.5 13 8z" fill="#8a6e52"/><path d="M19.5 8c-1.5 5.5-2.2 10.5-2.2 16s.7 10.5 2.2 16M28.5 8c1.5 5.5 2.2 10.5 2.2 16s-.7 10.5-2.2 16" stroke="#6a5540" stroke-width="1.3" fill="none"/><path d="M10 14.5h28M10 33.5h28" stroke="#1a5070" stroke-width="3.2"/><path d="M24 17.5c3 4 4.6 6.3 4.6 8.5a4.6 4.6 0 01-9.2 0c0-2.2 1.6-4.5 4.6-8.5z" fill="#d3e2ea" stroke="#1a5070" stroke-width="1.5"/>`)},
+  log:{n:"航海日誌",u:"本",d:"遺囑、登記，這些都要寫下來",svg:S(`<path d="M37 12h3.5v28H37" fill="#fffdfa" stroke="#d9c7ab" stroke-width="1.2"/><rect x="9" y="8" width="29" height="34" rx="3" fill="#1a5070"/><rect x="9" y="8" width="6" height="34" rx="2" fill="#6a5540"/><rect x="19" y="14" width="14" height="4" rx="2" fill="#c9a96b"/><path d="M19 26c2.3-2.4 4.7-2.4 7 0s4.7 2.4 7 0M19 32c2.3-2.4 4.7-2.4 7 0s4.7 2.4 7 0" stroke="#fffdfa" stroke-width="1.6" fill="none" stroke-linecap="round"/>`)},
+  A:{n:"錨",u:"個",d:"房子和土地就像錨，停在岸上不會動的財產",svg:S(`<circle cx="24" cy="9" r="4.2" fill="none" stroke="#6a5540" stroke-width="2.8"/><path d="M24 13.5V39" stroke="#1a5070" stroke-width="4.2" stroke-linecap="round"/><path d="M15.5 20h17" stroke="#1a5070" stroke-width="3.6" stroke-linecap="round"/><path d="M10 29c1.5 7 7 11 14 11s12.5-4 14-11" fill="none" stroke="#1a5070" stroke-width="3.8" stroke-linecap="round"/><path d="M6.5 31.5l3-6 5 4.2zM41.5 31.5l-3-6-5 4.2z" fill="#1a5070"/>`)},
+  B:{n:"船舵",u:"個",d:"公司由誰掌舵、誰來接手",svg:S(`<path d="M24 4v40M4 24h40M9.9 9.9l28.2 28.2M38.1 9.9L9.9 38.1" stroke="#6a5540" stroke-width="3.2" stroke-linecap="round"/><circle cx="24" cy="24" r="13" fill="none" stroke="#6a5540" stroke-width="4.5"/><circle cx="24" cy="24" r="13" fill="none" stroke="#c9a96b" stroke-width="1.2"/><circle cx="24" cy="24" r="5" fill="#1a5070"/><circle cx="24" cy="24" r="1.8" fill="#c9a96b"/>`)},
+  C:{n:"救生圈",u:"個",d:"發生意外時，接住家人的那筆錢",svg:S(`<circle cx="24" cy="24" r="15" fill="none" stroke="#fffdfa" stroke-width="10"/><circle cx="24" cy="24" r="15" fill="none" stroke="#1a5070" stroke-width="10" stroke-dasharray="11.78 11.78" transform="rotate(-22 24 24)"/><circle cx="24" cy="24" r="20" fill="none" stroke="#6a5540" stroke-width="1.2"/><circle cx="24" cy="24" r="10" fill="none" stroke="#6a5540" stroke-width="1.2"/><path d="M24 2.5v4M24 41.5v4M2.5 24h4M41.5 24h4" stroke="#6a5540" stroke-width="2.4" stroke-linecap="round"/>`)},
+  D:{n:"望遠鏡",u:"個",d:"看得到遠方的資產",svg:S(`<path d="M21 31l-5.5 12M27 31l5.5 12M24 31v12" stroke="#6a5540" stroke-width="2.2" stroke-linecap="round"/><g transform="rotate(-24 24 22)"><rect x="5" y="18" width="13" height="8" rx="2" fill="#6a5540"/><rect x="17" y="16" width="14" height="12" rx="2" fill="#1a5070"/><rect x="30" y="13.5" width="12" height="17" rx="3" fill="#1a5070"/><rect x="16.5" y="16" width="2.6" height="12" fill="#c9a96b"/><rect x="30" y="13.5" width="3" height="17" fill="#c9a96b"/><rect x="40" y="15.5" width="2" height="13" rx="1" fill="#d3e2ea"/></g>`)},
+  nums:{n:"藏寶箱",u:"個",d:"你的資產和退休數字，都收在這裡",svg:S(`<circle cx="18" cy="17" r="4.5" fill="#c9a96b" stroke="#6a5540"/><circle cx="27" cy="14.5" r="4.5" fill="#e3c98f" stroke="#6a5540"/><circle cx="33" cy="18" r="3.8" fill="#c9a96b" stroke="#6a5540"/><path d="M7 23c0-7 6-10.5 17-10.5S41 16 41 23z" fill="#6a5540"/><rect x="7" y="22" width="34" height="18" rx="2.5" fill="#8a6e52"/><path d="M13 13.5V40M35 13.5V40" stroke="#1a5070" stroke-width="3"/><rect x="7" y="22" width="34" height="3.2" fill="#1a5070"/><rect x="20.5" y="21" width="7" height="9" rx="2" fill="#c9a96b" stroke="#6a5540"/><circle cx="24" cy="25.5" r="1.2" fill="#6a5540"/>`)}
 };
-const supCount = pg=> pg==="nums" ? (Object.keys(nums).length?1:0) : (ITEMS[pg]||[]).filter(x=>checked.has(x.id)).length;
-const supBadge = pg=>`<span class="supply" id="sup">${SUP[pg].svg}${SUP[pg].n} ×${supCount(pg)}</span>`;
+const SUP_ORDER = ["p1","log","med","bread","water","A","B","C","D","nums"];
+const supIds = k=> ITEMS[k] ? ITEMS[k].map(x=>x.id) : ((GROUPS.p2.find(g=>g.s===k)||{}).ids||[]);
+const supCount = k=> k==="nums" ? (Object.keys(nums).length?1:0) : supIds(k).filter(id=>checked.has(id)).length;
+const supOf = id=> SUP_ORDER.find(k=>k!=="nums" && supIds(k).includes(id));
+const supBadge = k=>`<span class="supply" id="sup-${k}">${SUP[k].svg}${SUP[k].n} ×${supCount(k)}</span>`;
 const TYPE = {
   "低":{name:"平靜海面",line:"你的傳承航程目前是平靜海面：家庭和資產情況單純，等家庭或資產有變化時再檢視就好。"},
   "中":{name:"準備揚帆",line:"現在是準備揚帆的時候：建議在一到兩年內開始規劃。"},
@@ -292,7 +302,7 @@ const TIPS = {
   "4":"另一半帶來的孩子，沒有辦收養的話，不會繼承你的財產。",
   "5":"沒有子女的話，父母是繼承人；父母都不在了，才輪到兄弟姊妹。",
   "7":"自己寫的遺囑要整份親手寫，打字印出來的不算。",
-  "8":"登記的人過世，財產就算是他的遺產，出錢的人要拿出證據，甚至打官司，才拿得回來。",
+  "8":"登記的人過世，財產會被當成他的遺產，出錢的人要拿出證據，甚至打官司，才拿得回來。",
   "9":"家人繼承後要還的債，最多就是繼承到的財產，作保的債也一樣。",
   "11":"先指定將來照顧你的人（意定監護），要趁意識清楚時到公證人那裡辦。",
   "14":"115 年每個人每年送出 244 萬元以內，不用繳贈與稅。",
@@ -362,7 +372,7 @@ function render(){
   } else if(page==="nums"){
     h = stageHead("nums") + `<h2>幾個數字${supBadge("nums")}</h2>
       <p>這一頁的數字是為了幫你估算遺產稅，以及退休後需要準備多少錢，讓報告更貼近你的情況。填大概數字即可，單位是萬元。</p>
-      <p class="hint">全部選填，不想填可以直接按「下一步」。填了任何一個數字，就拿到藏寶箱。</p>` +
+      <p class="hint">全部選填，不想填可以直接按「下一步」。填了任何一個數字，就拿到藏寶箱：${SUP.nums.d}。</p>` +
       ["資產","退休"].map(g=>`<div class="numgrp"><h3>${g}</h3>` + NUMS.filter(n=>n.g===g).map(n=>
         `<label class="num"><span>${n.t}</span><input type="number" inputmode="decimal" min="0" step="any" data-num="${n.k}" value="${nums[n.k]??""}"><em>${n.u}</em></label>`).join("") + `</div>`).join("") + navHtml();
   } else if(page==="wish"){
@@ -376,9 +386,14 @@ function render(){
     const opt = x=>`<label class="opt ${checked.has(x.id)?'on':''}">
         <input type="checkbox" value="${x.id}" ${checked.has(x.id)?'checked':''}><span>${esc(x.t)}${TIPS[x.id]?`<span class="tip">小知識｜${TIPS[x.id]}</span>`:""}</span></label>`;
     const body = GROUPS[page]
-      ? GROUPS[page].map(g=>`<div class="numgrp"><h3>${g.h}</h3>` + g.ids.map(id=>opt(ITEMS[page].find(x=>x.id===id))).join("") + `</div>`).join("")
+      ? GROUPS[page].map(g=>`<div class="numgrp"><h3>${g.h}${g.s?supBadge(g.s):""}</h3>` +
+          (g.s?`<p class="sdesc">每勾一項拿一${SUP[g.s].u}${SUP[g.s].n}：${SUP[g.s].d}</p>`:"") +
+          g.ids.map(id=>opt(ITEMS[page].find(x=>x.id===id))).join("") + `</div>`).join("")
       : ITEMS[page].map(opt).join("");
-    h = stageHead(page) + `<h2>${head}${supBadge(page)}</h2><p class="hint">勾選符合你的項目，每勾一項就拿到一個${SUP[page].n}；都不符合的話，直接按「下一步」。</p>` + body + navHtml();
+    const k = SUP[page] ? page : null;
+    h = stageHead(page) + `<h2>${head}${k?supBadge(k):""}</h2><p class="hint">` +
+      (k ? `勾選符合你的項目，每勾一項就拿到一${SUP[k].u}${SUP[k].n}：${SUP[k].d}。` : `勾選符合你的項目，每一組各有一種出航物資可以拿。`) +
+      `都不符合的話，直接按「下一步」。</p>` + body + navHtml();
   }
   $("#card").innerHTML = h + `<div class="err" id="err"></div>`;
   window.scrollTo(0,0);
@@ -500,14 +515,14 @@ document.addEventListener("input",e=>{
   if(el.dataset && el.dataset.num){
     const had = supCount("nums");
     const v=el.value.trim(); if(v===""||isNaN(+v)||+v<0) delete nums[el.dataset.num]; else nums[el.dataset.num]=+v;
-    if(supCount("nums")!==had) gotSupply(had ? null : el.closest(".num"));
+    if(supCount("nums")!==had) gotSupply("nums", had ? null : el.closest(".num"));
   }
 });
 /* 拿到物資：標題旁的數量更新，勾選的那一格跳出 +1、+2⋯⋯ */
-function gotSupply(at){
-  const pg = pages()[step], b = $("#sup"); if(!SUP[pg] || !b) return;
-  const n = supCount(pg);
-  b.innerHTML = `${SUP[pg].svg}${SUP[pg].n} ×${n}`;
+function gotSupply(k, at){
+  const b = k && $("#sup-"+k); if(!b) return;
+  const n = supCount(k);
+  b.innerHTML = `${SUP[k].svg}${SUP[k].n} ×${n}`;
   if(!at) return;
   b.classList.remove("bump"); void b.offsetWidth; b.classList.add("bump");
   const p = document.createElement("span"); p.className = "plus"; p.textContent = "+" + n;
@@ -515,7 +530,7 @@ function gotSupply(at){
 }
 document.addEventListener("change",e=>{
   const el = e.target;
-  if(el.type==="checkbox"){ el.checked?checked.add(el.value):checked.delete(el.value); el.closest(".opt").classList.toggle("on",el.checked); sfx.tick(el.checked); gotSupply(el.checked ? el.closest(".opt") : null); }
+  if(el.type==="checkbox"){ el.checked?checked.add(el.value):checked.delete(el.value); el.closest(".opt").classList.toggle("on",el.checked); sfx.tick(el.checked); gotSupply(supOf(el.value), el.checked ? el.closest(".opt") : null); }
   if(el.type==="radio"){
     gates[el.name]=el.value; sfx.tick(el.value==="yes");
     if(el.value==="no") ITEMS[el.name].forEach(x=>checked.delete(x.id));
@@ -637,7 +652,7 @@ function celebrate(){
   document.body.appendChild(a); setTimeout(()=>a.remove(),2700);
 }
 function bagHtml(){
-  const got = ["p1","p2","A","B","C","D","nums"].map(k=>[k,supCount(k)]).filter(([,n])=>n>0);
+  const got = SUP_ORDER.map(k=>[k,supCount(k)]).filter(([,n])=>n>0);
   if(!got.length) return "";
   return `<div class="bag"><h3>這趟收集到的出航物資</h3><div class="its">` +
     got.map(([k,n])=>`<span>${SUP[k].svg}${SUP[k].n} ×${n}</span>`).join("") +
