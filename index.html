@@ -381,7 +381,7 @@ const sfx = {
   pass(){ if(!soundOn) return; tone(784,0,0.25,"triangle",0.14); tone(1047,0.13,0.35,"triangle",0.14); },
   arrive(){ if(!soundOn) return; [523,659,784,1047].forEach((f,i)=>tone(f,i*0.11,0.3,"triangle",0.14)); tone(1319,0.46,0.7,"sine",0.12); }
 };
-/* 手機喇叭放不出低頻，海浪聲集中在 260–1100Hz、音量提高（10/18 她手機上聽不到） */
+/* 海浪音色維持原本低沉的（她說原來的頻率比較好），靠音量讓手機聽得到 */
 /* 背景音樂：海浪聲＋偶爾海鷗（她 10/18 選），即時合成；按「出發」才開始 */
 let music = null;
 function startMusic(){
@@ -391,10 +391,10 @@ function startMusic(){
   const len=c.sampleRate*2, buf=c.createBuffer(1,len,c.sampleRate), d=buf.getChannelData(0);
   for(let i=0;i<len;i++) d[i]=Math.random()*2-1;
   const noise=c.createBufferSource(); noise.buffer=buf; noise.loop=true;
-  const lp=c.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=1100;
-  const hp=c.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=260;
-  const wg=c.createGain(); wg.gain.value=0.1;
-  const lfo=c.createOscillator(); lfo.frequency.value=0.13; const lg=c.createGain(); lg.gain.value=0.075;
+  const lp=c.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=520;
+  const hp=c.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=120;
+  const wg=c.createGain(); wg.gain.value=0.075;
+  const lfo=c.createOscillator(); lfo.frequency.value=0.13; const lg=c.createGain(); lg.gain.value=0.055;
   lfo.connect(lg); lg.connect(wg.gain);
   noise.connect(hp); hp.connect(lp); lp.connect(wg); wg.connect(master); noise.start(); lfo.start();
   // 海鷗：每 15～25 秒隨機叫一到三聲（合成，先試聽）
