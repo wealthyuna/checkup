@@ -60,6 +60,12 @@ button{font:inherit;border:0;border-radius:10px;padding:13px 18px;cursor:pointer
 .cta{display:block;text-align:center;background:var(--navy);color:#fff;text-decoration:none;
   padding:14px;border-radius:10px;font-weight:500;margin-top:8px}
 .note{font-size:13px;color:var(--muted);margin-top:18px}
+.numgrp{margin:6px 0 18px}
+.numgrp h3{font-size:17px;color:var(--khaki);margin:0 0 8px}
+.num{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.num span{flex:1}
+.num input{width:110px;padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit;text-align:right;background:#fff}
+.num em{font-style:normal;color:var(--muted);width:24px}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -178,11 +184,20 @@ const LEVEL_LINE = {
   "低":"目前情況單純，等家庭或資產有變化時再檢視就好。"
 };
 
-let checked = new Set(), gates = {}, wish = "", step = 0;
+let checked = new Set(), gates = {}, wish = "", step = 0, nums = {};
+const NUMS = [
+  {g:"資產",k:"asset",t:"名下資產合計",u:"萬"},
+  {g:"資產",k:"realty",t:"其中不動產",u:"萬"},
+  {g:"資產",k:"debt",t:"負債合計（房貸、信貸、借款）",u:"萬"},
+  {g:"退休",k:"retAge",t:"預計幾歲退休",u:"歲"},
+  {g:"退休",k:"retSpend",t:"退休後每月生活費",u:"萬"},
+  {g:"退休",k:"retIncome",t:"退休後每月固定收入（勞保年金、租金等）",u:"萬"}
+];
 
 function pages(){
   const p = ["intro","p1","p2","gates"];
   GATES.forEach(g=>{ if(gates[g.k]==="yes") p.push(g.k) });
+  p.push("nums");
   p.push("wish");
   return p;
 }
@@ -206,6 +221,12 @@ function render(){
         <label class="${gates[g.k]==='yes'?'on':''}"><input type="radio" name="${g.k}" value="yes">有</label>
         <label class="${gates[g.k]==='no'?'on':''}"><input type="radio" name="${g.k}" value="no">沒有</label>
       </div></div>`).join("") + navHtml();
+  } else if(page==="nums"){
+    h = `<h2>幾個數字</h2>
+      <p>這一頁的數字是為了幫你估算遺產稅，以及退休後需要準備多少錢，讓報告更貼近你的情況。大概估就好，單位是萬元。</p>
+      <p class="hint">全部選填，不想填可以直接按「下一步」。</p>` +
+      ["資產","退休"].map(g=>`<div class="numgrp"><h3>${g}</h3>` + NUMS.filter(n=>n.g===g).map(n=>
+        `<label class="num"><span>${n.t}</span><input type="number" inputmode="decimal" min="0" step="any" data-num="${n.k}" value="${nums[n.k]??""}"><em>${n.u}</em></label>`).join("") + `</div>`).join("") + navHtml();
   } else if(page==="wish"){
     h = `<h2>最後一題</h2><p class="hint">選填</p>
       <p>你現在最想先處理的一件事是什麼？</p>
@@ -226,6 +247,10 @@ function navHtml(){
     <button class="primary" data-go="next">下一步</button></div>`;
 }
 
+document.addEventListener("input",e=>{
+  const el = e.target;
+  if(el.dataset && el.dataset.num){ const v=el.value.trim(); if(v===""||isNaN(+v)||+v<0) delete nums[el.dataset.num]; else nums[el.dataset.num]=+v; }
+});
 document.addEventListener("change",e=>{
   const el = e.target;
   if(el.type==="checkbox"){ el.checked?checked.add(el.value):checked.delete(el.value); el.closest(".opt").classList.toggle("on",el.checked); }
@@ -248,7 +273,43 @@ document.addEventListener("click",e=>{
 });
 
 /* 分級 */
-function allItems(){ return Object.values(ITEMS).flat().filter(x=>checked.has(x.id)); }
+function derived(){
+  const d = new Set(checked);
+  if(nums.asset!==undefined && nums.asset>=2000) d.add("14");
+  if(nums.asset!==undefined && nums.debt!==undefined && nums.debt>0 && nums.debt>=nums.asset) d.add("17");
+  return d;
+}
+function allItems(){ const d=derived(); return Object.values(ITEMS).flat().filter(x=>d.has(x.id)); }
+const fmt = n=>Math.round(n).toLocaleString("zh-TW");
+function numParas(){
+  const out=[]; const a=nums.asset, debt=nums.debt||0;
+  let net=null;
+  if(a!==undefined){
+    net = a-debt;
+    let s = `你填的資產約 ${fmt(a)} 萬`;
+    if(nums.debt!==undefined){
+      if(debt===0) s += `，沒有負債`;
+      else if(net>=0) s += `、負債約 ${fmt(debt)} 萬，淨資產約 ${fmt(net)} 萬`;
+      else s += `、負債約 ${fmt(debt)} 萬，負債比資產多約 ${fmt(-net)} 萬`;
+    }
+    if(net>1333) s += "，淨資產超過遺產稅免稅額 1,333 萬（還沒扣除配偶、子女等扣除額）";
+    s += "。";
+    if(nums.realty!==undefined && a>0 && nums.realty>=a/2) s += "資產以不動產為主，要預先準備繳稅的現金。";
+    out.push(s);
+  }
+  const {retAge,retSpend,retIncome}=nums;
+  if(retAge!==undefined && retSpend!==undefined && retIncome!==undefined){
+    const gap=Math.max(0,retSpend-retIncome), years=Math.max(0,90-retAge), need=gap*12*years;
+    let s = gap>0 ? `退休後每月缺口約 ${(Math.round(gap*10)/10).toLocaleString("zh-TW")} 萬，以活到 90 歲計算，退休期間大約要準備 ${fmt(need)} 萬。`
+                  : "依你填的數字，退休後每月固定收入足以支應生活費。";
+    if(net!==null && gap>0){
+      s += (net-need>0) ? `你的淨資產扣掉這筆，大約 ${fmt(net-need)} 萬是可以規劃傳承的部分。` : "你的淨資產還不夠支應這筆退休準備，傳承規劃要先顧好退休生活。";
+    }
+    s += "（沒有計入通膨和投資報酬，實際金額可以請理財規劃顧問細算。）";
+    out.push(s);
+  }
+  return out;
+}
 function level(sel){
   const complex = new Set(sel.filter(x=>x.c).map(x=>x.id.startsWith("D")?"D":x.id)).size;
   if(complex>=2) return "高";
@@ -269,17 +330,18 @@ function report(){
   const pick = (x,k)=> (k!=="ins" && x.id==="4" && checked.has("1")) ? null : x[k];
   const will = uniq(sel.map(x=>pick(x,"will")).filter(Boolean));
   let ins = sel.map(x=>x.ins).filter(Boolean);
-  if(checked.has("A9")) ins = ins.filter(s=>s!=="預留一筆現金讓家人繳遺產稅");
+  if(derived().has("A9")) ins = ins.filter(s=>s!=="預留一筆現金讓家人繳遺產稅");
   ins = uniq(ins);
   /* 指定受益人的子句只留第一句，避免重複 */
   let seenBen=false; ins = ins.filter(s=>{ if(!s.startsWith("指定受益人")) return true; if(seenBen) return false; seenBen=true; return true; });
   const trust = uniq(sel.map(x=>pick(x,"trust")).filter(Boolean));
-  const care = checked.has("11");
+  const care = derived().has("11");
   const other = uniq(order.map(x=>x.other).filter(Boolean)).slice(0,4);
 
   const ps = [];
   if(top.length) ps.push("依你的情況，" + top.map(x=>x.short).join("，") + "。");
   else ps.push("依你的勾選，目前沒有需要特別處理的情況。");
+  numParas().forEach(s=>ps.push(s));
   if(will.length) ps.push("遺囑可以" + joinCan(will) + "。不過每位繼承人都有法律保障的最低份額（特留分），分配時不能低於這個份額。");
   if(ins.length) ps.push("保單可以" + joinCan(ins) + "。");
   if(trust.length || care){
@@ -315,7 +377,8 @@ function submit(){
   const hidden = {
     level: r.lv,
     items: r.sel.map(x=>x.id+" "+x.t).join("\n"),
-    wish: wish
+    wish: wish,
+    nums: NUMS.filter(n=>nums[n.k]!==undefined).map(n=>n.t+"："+nums[n.k]+n.u).join(String.fromCharCode(10))
   };
   if(!window.Tally){ $("#err").textContent="表單載入中，請再按一次。"; return; }
   window.Tally.openPopup(TALLY_FORM_ID,{layout:"modal",width:520,hiddenFields:hidden,
