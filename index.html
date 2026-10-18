@@ -368,33 +368,46 @@ function mapHtml(n, cur){
 /* 音效：網頁內產生，不用音檔；預設開啟、音量小 */
 let soundOn = true, actx = null;
 try{ if(localStorage.getItem("snd")==="off") soundOn=false; }catch(e){}
-function ac(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(actx&&actx.state==="suspended") actx.resume(); return actx; }
+let out=null;
+function ac(){
+  if(!actx){
+    try{ if(navigator.audioSession) navigator.audioSession.type="playback"; }catch(e){}
+    try{
+      actx=new (window.AudioContext||window.webkitAudioContext)();
+      /* 所有聲音先經過壓縮再整體放大，手機喇叭才聽得清楚 */
+      const comp=actx.createDynamicsCompressor(); comp.threshold.value=-24; comp.ratio.value=4;
+      out=actx.createGain(); out.gain.value=1.8; comp.connect(out); out.connect(actx.destination); out=comp;
+    }catch(e){}
+  }
+  if(actx&&actx.state==="suspended") actx.resume();
+  return actx;
+}
 function tone(f,at,dur,type,vol){
   const c=ac(); if(!c) return;
   const o=c.createOscillator(), g=c.createGain(), t0=c.currentTime+at;
   o.type=type||"sine"; o.frequency.value=f;
   g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(vol||0.06,t0+0.015); g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
-  o.connect(g); g.connect(c.destination); o.start(t0); o.stop(t0+dur+0.05);
+  o.connect(g); g.connect(out||c.destination); o.start(t0); o.stop(t0+dur+0.05);
 }
 const sfx = {
   tick(on){ if(!soundOn) return; tone(on?740:520,0,0.12,"sine",0.12); },
   pass(){ if(!soundOn) return; tone(784,0,0.25,"triangle",0.14); tone(1047,0.13,0.35,"triangle",0.14); },
   arrive(){ if(!soundOn) return; [523,659,784,1047].forEach((f,i)=>tone(f,i*0.11,0.3,"triangle",0.14)); tone(1319,0.46,0.7,"sine",0.12); }
 };
-/* 海浪音色維持原本低沉的（她說原來的頻率比較好），靠音量讓手機聽得到 */
+/* 海浪：她要悠閒的海島感（慢、一波一波），整體要大聲；約 11 秒一波，波與波之間幾乎靜下來 */
 /* 背景音樂：海浪聲＋偶爾海鷗（她 10/18 選），即時合成；按「出發」才開始 */
 let music = null;
 function startMusic(){
   const c=ac(); if(!c || music) return;
-  const master=c.createGain(); master.gain.value = soundOn?1:0; master.connect(c.destination);
+  const master=c.createGain(); master.gain.value = soundOn?1:0; master.connect(out||c.destination);
   // 海浪：濾波雜訊，音量隨慢速 LFO 起伏
   const len=c.sampleRate*2, buf=c.createBuffer(1,len,c.sampleRate), d=buf.getChannelData(0);
   for(let i=0;i<len;i++) d[i]=Math.random()*2-1;
   const noise=c.createBufferSource(); noise.buffer=buf; noise.loop=true;
-  const lp=c.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=520;
-  const hp=c.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=120;
-  const wg=c.createGain(); wg.gain.value=0.075;
-  const lfo=c.createOscillator(); lfo.frequency.value=0.13; const lg=c.createGain(); lg.gain.value=0.055;
+  const lp=c.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=700;
+  const hp=c.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=150;
+  const wg=c.createGain(); wg.gain.value=0.09;
+  const lfo=c.createOscillator(); lfo.frequency.value=0.09; const lg=c.createGain(); lg.gain.value=0.082;
   lfo.connect(lg); lg.connect(wg.gain);
   noise.connect(hp); hp.connect(lp); lp.connect(wg); wg.connect(master); noise.start(); lfo.start();
   // 海鷗：每 15～25 秒隨機叫一到三聲（合成，先試聽）
