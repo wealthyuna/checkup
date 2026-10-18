@@ -223,7 +223,7 @@ function render(){
       </div></div>`).join("") + navHtml();
   } else if(page==="nums"){
     h = `<h2>幾個數字</h2>
-      <p>這一頁的數字是為了幫你估算遺產稅，以及退休後需要準備多少錢，讓報告更貼近你的情況。大概估就好，單位是萬元。</p>
+      <p>這一頁的數字是為了幫你估算遺產稅，以及退休後需要準備多少錢，讓報告更貼近你的情況。填大概數字即可，單位是萬元。</p>
       <p class="hint">全部選填，不想填可以直接按「下一步」。</p>` +
       ["資產","退休"].map(g=>`<div class="numgrp"><h3>${g}</h3>` + NUMS.filter(n=>n.g===g).map(n=>
         `<label class="num"><span>${n.t}</span><input type="number" inputmode="decimal" min="0" step="any" data-num="${n.k}" value="${nums[n.k]??""}"><em>${n.u}</em></label>`).join("") + `</div>`).join("") + navHtml();
