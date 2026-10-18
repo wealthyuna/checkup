@@ -406,8 +406,8 @@ function startMusic(){
   const noise=c.createBufferSource(); noise.buffer=buf; noise.loop=true;
   const lp=c.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=700;
   const hp=c.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=150;
-  const wg=c.createGain(); wg.gain.value=0.09;
-  const lfo=c.createOscillator(); lfo.frequency.value=0.09; const lg=c.createGain(); lg.gain.value=0.082;
+  const wg=c.createGain(); wg.gain.value=0.055;
+  const lfo=c.createOscillator(); lfo.frequency.value=0.09; const lg=c.createGain(); lg.gain.value=0.05;
   lfo.connect(lg); lg.connect(wg.gain);
   noise.connect(hp); hp.connect(lp); lp.connect(wg); wg.connect(master); noise.start(); lfo.start();
   // 海鷗：每 15～25 秒隨機叫一到三聲（合成，先試聽）
