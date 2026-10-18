@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>財富傳承健檢｜有備而富</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1a5070; --khaki:#6a5540; --cream:#f5f0ea;
+  --ink:#24323b; --muted:#6b7279; --line:#e2d9cd; --card:#fffdfa;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--cream);color:var(--ink);
+  font-family:"Noto Sans TC",system-ui,sans-serif;font-size:17px;line-height:1.7}
+.wrap{max-width:620px;margin:0 auto;padding:24px 16px 48px}
+.brand{font-size:14px;color:var(--khaki);letter-spacing:.06em;margin-bottom:18px}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:22px}
+.bar i{display:block;height:100%;width:0;background:var(--navy);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 20px}
+h1{font-size:28px;line-height:1.35;color:var(--navy);margin:0 0 14px}
+h2{font-size:22px;color:var(--navy);margin:0 0 6px}
+.hint{color:var(--muted);font-size:15px;margin:0 0 18px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:13px 14px;border:1px solid var(--line);
+  border-radius:10px;margin-bottom:10px;cursor:pointer;background:#fff}
+.opt input{width:20px;height:20px;margin-top:4px;accent-color:var(--navy);flex:none}
+.opt.on{border-color:var(--navy);background:#eef4f7}
+.gate{padding:14px 0;border-bottom:1px solid var(--line)}
+.gate:last-child{border-bottom:0}
+.gate p{margin:0 0 10px;font-weight:500}
+.yn{display:flex;gap:10px}
+.yn label{flex:1;text-align:center;padding:10px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:#fff}
+.yn input{display:none}
+.yn label.on{border-color:var(--navy);background:var(--navy);color:#fff}
+textarea{width:100%;min-height:110px;padding:12px;border:1px solid var(--line);border-radius:10px;
+  font:inherit;background:#fff;resize:vertical}
+.nav{display:flex;gap:10px;margin-top:20px}
+button{font:inherit;border:0;border-radius:10px;padding:13px 18px;cursor:pointer}
+.primary{flex:1;background:var(--navy);color:#fff;font-weight:500}
+.ghost{background:transparent;color:var(--navy);border:1px solid var(--navy)}
+.err{color:#a33b2b;font-size:15px;min-height:1.2em;margin-top:10px}
+.level{display:inline-block;padding:4px 14px;border-radius:999px;color:#fff;font-weight:700;margin-bottom:10px}
+.lv-高{background:#8a3b2e}.lv-中{background:var(--khaki)}.lv-低{background:var(--navy)}
+.lead{font-size:20px;font-weight:700;color:var(--navy);margin:0 0 16px}
+.result p{margin:0 0 14px}
+.hook{border-top:1px solid var(--line);padding-top:16px;margin-top:6px}
+.cta{display:block;text-align:center;background:var(--navy);color:#fff;text-decoration:none;
+  padding:14px;border-radius:10px;font-weight:500;margin-top:8px}
+.note{font-size:13px;color:var(--muted);margin-top:18px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">Yuna律師｜有備而富</div>
+  <div class="bar"><i id="bar"></i></div>
+  <div class="card" id="card"></div>
+</div>
+
+<script>
+/* 設定：Tally 表單 ID 還沒建，空字串時直接顯示結果（測試用） */
+const TALLY_FORM_ID = "";
+const BOOKING_URL = "https://tally.so/r/0Qp84A";
+
+/* 題目。short＝綜合句用的情況短語；will/ins/trust/other＝各工具句的子句；c＝複雜情況 */
+const ITEMS = {
+  p1:[
+    {id:"1",t:"有兩位以上的繼承人",short:"繼承人有兩位以上",
+      will:"先指定每位繼承人分到哪些財產",ins:"指定受益人，決定保險金給誰、各給多少",trust:"由受託人依你訂的條件，把財產交給每位繼承人"},
+    {id:"2",t:"繼承人年紀輕，或有需要特別照顧、保護的情況",short:"有需要特別照顧的家人",
+      trust:"讓需要照顧的家人分期領取，錢由受託人管理"},
+    {id:"3",t:"有法定繼承人以外想照顧的對象",short:"想照顧的人不是法定繼承人",
+      will:"把財產留給不是法定繼承人的人",trust:"把財產留給不是法定繼承人的人，由受託人依你訂的條件交付"},
+    {id:"4",t:"再婚家庭，或有繼子女、非婚生子女",short:"家庭成員有再婚或繼子女、非婚生子女",c:1,
+      will:"事先講清楚每個人分到什麼",ins:"指定受益人，讓你想照顧的家人拿到保險金",trust:"依你訂的條件分配給每位家人，不必等繼承時再協商"},
+    {id:"5",t:"單身或頂客族",short:"沒有子女",
+      will:"決定財產留給誰；沒有子女時，遺產依序由父母、兄弟姊妹、祖父母繼承，有配偶的話配偶也一起繼承",ins:"指定受益人，把保險金留給你想照顧的人",trust:"依你訂的條件照顧特定的人"},
+    {id:"6",t:"繼承人之間關係疏離或緊張",short:"繼承人之間關係緊張",c:1,
+      will:"指定遺囑執行人，由你信任的人執行分配",trust:"由受託人依你訂的條件交付，不需要繼承人之間協商"}
+  ],
+  p2:[
+    {id:"7",t:"還沒立遺囑，或遺囑立了很久沒有再看過",short:"還沒有立遺囑",
+      will:"依你現在的家庭和資產安排財產怎麼分",other:"目前沒有任何安排的話，遺產由全體繼承人共同繼承，要全體同意才能分割"},
+    {id:"8",t:"有借名登記、人頭帳戶，或財產登記名義人和實際出資人不同的情形",short:"有借名登記的財產",c:1,
+      other:"有借名登記的財產，可以在生前回復登記或留下書面約定，避免家人日後對財產歸屬有爭議"},
+    {id:"9",t:"替別人作保，或用你的財產替別人擔保",short:"有替別人作保或擔保",
+      other:"替別人作保或擔保的責任，可以整理成清單讓家人知道"},
+    {id:"10",t:"你或家人正面臨結婚、離婚、重病、退休等重大變化",short:"家裡正有重大變化",
+      other:"家裡有重大變化時，保單受益人、信託和財產登記都要重新檢視"},
+    {id:"11",t:"擔心失能或失智時，沒有人能依照你的意思管理財產、安排照顧",short:"擔心失能或失智",special:"care"},
+    {id:"12",t:"還沒算過退休後每個月要花多少、錢從哪裡來",short:"還沒算過退休金",
+      other:"退休後每月收入從哪裡來，可以先做退休現金流試算"},
+    {id:"13",t:"不清楚家裡全年收入、支出和負債的整體狀況",short:"家裡收支不清楚",
+      other:"規劃前先盤點家裡的收入、支出和負債"},
+    {id:"14",t:"名下資產合計約 2,000 萬元以上",short:"資產規模較大",c:1,
+      ins:"預留一筆現金讓家人繳遺產稅",other:"資產規模較大，可以生前分年贈與，分散移轉"}
+  ],
+  A:[
+    {id:"A1",t:"和家人共同持有，或繼承多年還沒分割",short:"有共有或還沒分割的不動產",c:1,
+      other:"共有或還沒分割的不動產，可以協議分割或整合持分，避免下一代共有人數更多"},
+    {id:"A2",t:"土地和建物分屬不同人，或有人使用、有人持有，權利義務不清楚",short:"不動產的產權或使用關係不清楚",
+      other:"產權或使用關係不清楚的不動產，先釐清登記和使用約定"},
+    {id:"A3",t:"有家族祖產、農地或其他特殊用地",short:"有祖產或農地",c:1,
+      other:"祖產或農地移轉前，先確認是否符合農業用地免徵遺產稅、贈與稅的條件"},
+    {id:"A4",t:"不確定房屋稅、地價稅的優惠是否還符合",short:"不確定不動產稅的優惠",
+      other:"房屋稅、地價稅的優惠，可以確認是否還適用"},
+    {id:"A5",t:"想把不動產給家人，但不清楚贈與、買賣、繼承各要繳哪些稅",short:"想把不動產給家人",
+      other:"不動產要給家人，可以先比較贈與、買賣、繼承的稅負"},
+    {id:"A6",t:"想把房子留給子女，但希望可以住到老",short:"房子希望住到老再給子女",
+      will:"指定房子之後由子女取得，生前房子仍在你名下",trust:"約定房子生前仍由你居住使用，之後再交給子女"},
+    {id:"A7",t:"每月房貸或其他貸款讓你有壓力",short:"房貸有壓力",
+      other:"房貸壓力可以從檢視貸款條件開始"},
+    {id:"A8",t:"想運用名下不動產取得資金",short:"想運用不動產取得資金",
+      other:"想運用不動產取得資金，可以先評估融資條件，不影響之後的傳承安排"},
+    {id:"A9",t:"資產以不動產為主，家人可能沒有足夠現金繳遺產稅",short:"資產以不動產為主",
+      ins:"讓家人有現金繳遺產稅，不必為了繳稅賣房子"},
+    {id:"A10",t:"擔心繼承後變成多人共有，難以處理",short:"擔心不動產繼承後變成多人共有",
+      will:"指定不動產由一個人取得，避免變成多人共有",ins:"照顧沒有分到不動產的家人"}
+  ],
+  B:[
+    {id:"B1",t:"公司還有其他股東或合夥人",short:"公司還有其他股東",c:1,
+      other:"公司有其他股東，可以用股東協議先約定股東過世或退出時股份怎麼處理"},
+    {id:"B2",t:"事業正值高峰期（資產價值最高、具有主導權及控制權）",short:"事業正在高峰",
+      other:"事業正在高峰，可以趁你還有主導權的時候安排股份移轉"},
+    {id:"B3",t:"有經營權、品牌或其他智慧財產權",short:"有經營權或品牌要交棒",
+      will:"指定股份由接班的人取得",ins:"照顧沒有接班的家人",other:"股份也可以生前分次移轉給接班的人"},
+    {id:"B4",t:"想把經營理念、價值觀、家訓或家族歷史與故事傳下去",short:"想傳下經營理念和家訓",
+      other:"想傳下的理念和家訓，可以寫成家族憲章"},
+    {id:"B5",t:"還沒決定由誰接手經營",short:"接班人還沒決定",
+      other:"接班人還沒決定，可以把經營和持股分開想：經營交給專業經理人，股份仍由家人持有"}
+  ],
+  C:[
+    {id:"C1",t:"要保人、被保險人、受益人的安排多年沒有檢視",short:"保單多年沒有檢視",
+      ins:"重新確認受益人是不是你現在想照顧的人"},
+    {id:"C2",t:"不確定保障金額夠不夠家人用",short:"不確定保額夠不夠",
+      ins:"檢視保額夠不夠支應家人的生活費和繳稅"}
+  ],
+  D:[
+    {id:"D1",t:"具有雙重國籍",short:"有雙重國籍",c:1},
+    {id:"D2",t:"有海外資產",short:"有海外資產",c:1},
+    {id:"D3",t:"家庭成員分散在不同國家",short:"家人分散在不同國家",c:1},
+    {id:"D4",t:"有移民計畫",short:"有移民計畫",c:1},
+    {id:"D5",t:"家人不知道海外資產在哪裡、要怎麼處理",short:"家人不清楚海外資產",c:1}
+  ]
+};
+ITEMS.D.forEach(x=>x.other="海外資產先整理清單，確認當地的繼承程序和稅務，讓家人知道資產在哪裡、怎麼辦理");
+
+const GATES = [
+  {k:"A",q:"名下有不動產嗎？"},
+  {k:"B",q:"有公司股權或自己的事業嗎？"},
+  {k:"C",q:"有保單嗎？"},
+  {k:"D",q:"你或家人有海外資產或跨國身分嗎？"}
+];
+const TITLES = {A:"不動產",B:"公司與事業",C:"保單",D:"海外與跨國"};
+const LEVEL_LINE = {
+  "高":"你的家庭和資產情況比較複雜，建議現在就開始規劃。",
+  "中":"建議在一到兩年內開始規劃。",
+  "低":"目前情況單純，等家庭或資產有變化時再檢視就好。"
+};
+
+let checked = new Set(), gates = {}, wish = "", step = 0;
+
+function pages(){
+  const p = ["intro","p1","p2","gates"];
+  GATES.forEach(g=>{ if(gates[g.k]==="yes") p.push(g.k) });
+  p.push("wish");
+  return p;
+}
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function render(){
+  const list = pages(), page = list[step];
+  $("#bar").style.width = Math.round(step/(list.length)*100)+"%";
+  let h = "";
+  if(page==="intro"){
+    h = `<h1>財富傳承健檢</h1>
+      <p>勾選符合你的情況，大約 5 分鐘。</p>
+      <p class="hint">填完留下聯絡方式，就能看到你的傳承規劃建議。</p>
+      <div class="nav"><button class="primary" data-go="next">開始</button></div>`;
+  } else if(page==="gates"){
+    h = `<h2>你的資產</h2><p class="hint">回答「有」的項目，下一步會再問幾題。</p>` +
+      GATES.map(g=>`<div class="gate"><p>${g.q}</p><div class="yn">
+        <label class="${gates[g.k]==='yes'?'on':''}"><input type="radio" name="${g.k}" value="yes">有</label>
+        <label class="${gates[g.k]==='no'?'on':''}"><input type="radio" name="${g.k}" value="no">沒有</label>
+      </div></div>`).join("") + navHtml();
+  } else if(page==="wish"){
+    h = `<h2>最後一題</h2><p class="hint">選填</p>
+      <p>你現在最想先處理的一件事是什麼？</p>
+      <textarea id="wish" maxlength="500">${esc(wish)}</textarea>
+      <div class="nav"><button class="ghost" data-go="back">上一步</button>
+      <button class="primary" data-go="submit">留下聯絡方式，看結果</button></div>`;
+  } else {
+    const head = page==="p1"?"人":page==="p2"?"事":TITLES[page];
+    h = `<h2>${head}</h2><p class="hint">勾選符合的項目，都不符合就直接下一步。</p>` +
+      ITEMS[page].map(x=>`<label class="opt ${checked.has(x.id)?'on':''}">
+        <input type="checkbox" value="${x.id}" ${checked.has(x.id)?'checked':''}><span>${esc(x.t)}</span></label>`).join("") + navHtml();
+  }
+  $("#card").innerHTML = h + `<div class="err" id="err"></div>`;
+  window.scrollTo(0,0);
+}
+function navHtml(){
+  return `<div class="nav"><button class="ghost" data-go="back">上一步</button>
+    <button class="primary" data-go="next">下一步</button></div>`;
+}
+
+document.addEventListener("change",e=>{
+  const el = e.target;
+  if(el.type==="checkbox"){ el.checked?checked.add(el.value):checked.delete(el.value); el.closest(".opt").classList.toggle("on",el.checked); }
+  if(el.type==="radio"){
+    gates[el.name]=el.value;
+    if(el.value==="no") ITEMS[el.name].forEach(x=>checked.delete(x.id));
+    el.closest(".yn").querySelectorAll("label").forEach(l=>l.classList.toggle("on",l.contains(el)));
+  }
+});
+document.addEventListener("click",e=>{
+  const b = e.target.closest("button[data-go]"); if(!b) return;
+  const go = b.dataset.go, page = pages()[step];
+  if(page==="wish") wish = ($("#wish")||{}).value||"";
+  if(go==="back"){ step=Math.max(0,step-1); render(); return; }
+  if(go==="next"){
+    if(page==="gates" && GATES.some(g=>!gates[g.k])){ $("#err").textContent="每一題都請選「有」或「沒有」。"; return; }
+    step++; render(); return;
+  }
+  if(go==="submit") submit();
+});
+
+/* 分級 */
+function allItems(){ return Object.values(ITEMS).flat().filter(x=>checked.has(x.id)); }
+function level(sel){
+  const complex = new Set(sel.filter(x=>x.c).map(x=>x.id.startsWith("D")?"D":x.id)).size;
+  if(complex>=2) return "高";
+  if(complex===1 || sel.length>=5) return "中";
+  return "低";
+}
+
+/* 組報告 */
+function report(){
+  const sel = allItems(), lv = level(sel);
+  const order = [...sel.filter(x=>x.c), ...sel.filter(x=>!x.c)];
+  const seenD = new Set();
+  const top = order.filter(x=>{ if(x.id.startsWith("D")){ if(seenD.size) return false; seenD.add(1);} return true; }).slice(0,3);
+  const uniq = arr=>[...new Set(arr)];
+  /* 每種工具最多寫兩件事，保持簡短 */
+  const joinCan = a=> a.slice(0,2).join("，也可以");
+  /* 1 和 4 的遺囑、信託子句意思重疊，兩項都勾時只留 1 */
+  const pick = (x,k)=> (k!=="ins" && x.id==="4" && checked.has("1")) ? null : x[k];
+  const will = uniq(sel.map(x=>pick(x,"will")).filter(Boolean));
+  let ins = sel.map(x=>x.ins).filter(Boolean);
+  if(checked.has("A9")) ins = ins.filter(s=>s!=="預留一筆現金讓家人繳遺產稅");
+  ins = uniq(ins);
+  /* 指定受益人的子句只留第一句，避免重複 */
+  let seenBen=false; ins = ins.filter(s=>{ if(!s.startsWith("指定受益人")) return true; if(seenBen) return false; seenBen=true; return true; });
+  const trust = uniq(sel.map(x=>pick(x,"trust")).filter(Boolean));
+  const care = checked.has("11");
+  const other = uniq(order.map(x=>x.other).filter(Boolean)).slice(0,4);
+
+  const ps = [];
+  if(top.length) ps.push("依你的情況，" + top.map(x=>x.short).join("，") + "。");
+  else ps.push("依你的勾選，目前沒有需要特別處理的情況。");
+  if(will.length) ps.push("遺囑可以" + joinCan(will) + "。不過每位繼承人都有法律保障的最低份額（特留分），分配時不能低於這個份額。");
+  if(ins.length) ps.push("保單可以" + joinCan(ins) + "。");
+  if(trust.length || care){
+    let s = trust.length ? "信託可以" + joinCan(trust) + "。" : "";
+    if(care) s += (s?"":"") + "擔心失能或失智的話，可以用意定監護先選定監護人，照顧費用由安養信託按月支付。";
+    ps.push(s);
+  }
+  if(other.length) ps.push("另外，" + other.join("；") + "。");
+  const hook = (will.length||ins.length||trust.length||care)
+    ? "這些工具差在哪裡、怎麼搭配，要看你的資產和家人的狀況，這部分可以預約諮詢當面討論。"
+    : "實際要怎麼安排，要看你的資產和家人的狀況，這部分可以預約諮詢當面討論。";
+  return {lv, ps, hook, sel};
+}
+
+function showResult(){
+  const r = report();
+  $("#bar").style.width = "100%";
+  $("#card").innerHTML = `<div class="result">
+    <span class="level lv-${r.lv}">${r.lv}</span>
+    <p class="lead">${LEVEL_LINE[r.lv]}</p>
+    ${r.ps.map(p=>`<p>${esc(p)}</p>`).join("")}
+    <p class="hook">${r.hook}</p>
+    <a class="cta" href="${BOOKING_URL}" target="_blank" rel="noopener">預約諮詢</a>
+    <p class="note">這份結果依你勾選的項目產生，是初步的方向，實際安排要看完整的資產與家庭狀況。</p>
+  </div>`;
+  window.scrollTo(0,0);
+}
+
+function submit(){
+  const r = report();
+  if(!TALLY_FORM_ID){ showResult(); return; }
+  const hidden = {
+    level: r.lv,
+    items: r.sel.map(x=>x.id+" "+x.t).join("\n"),
+    wish: wish
+  };
+  if(!window.Tally){ $("#err").textContent="表單載入中，請再按一次。"; return; }
+  window.Tally.openPopup(TALLY_FORM_ID,{layout:"modal",width:520,hiddenFields:hidden,
+    onSubmit:()=>{ window.Tally.closePopup(TALLY_FORM_ID); showResult(); }});
+}
+
+render();
+</script>
+<script async src="https://tally.so/widgets/embed.js"></script>
+</body>
+</html>
