@@ -95,6 +95,13 @@ button{font:inherit;border:0;border-radius:10px;padding:13px 18px;cursor:pointer
 .rcard .tline{font-size:17px;line-height:1.7;margin:0}
 .rcard .by{font-size:12px;color:#dfe8ee;line-height:1.6}
 .shot{font-size:13px;color:var(--muted);text-align:center;margin:-8px 0 18px}
+.confetti{position:fixed;top:-12px;width:9px;height:14px;border-radius:2px;z-index:20;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translate(var(--dx),110vh) rotate(var(--rot))}}
+.arrive{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:21;pointer-events:none;
+  background:#fffdfa;color:var(--navy);border:2px solid var(--navy);border-radius:16px;padding:16px 26px;text-align:center;
+  font-weight:700;font-size:22px;box-shadow:0 12px 30px rgba(26,80,112,.25);animation:arrive 1.8s ease forwards}
+.arrive small{display:block;font-size:14px;font-weight:500;color:var(--khaki)}
+@keyframes arrive{0%{transform:translate(-50%,-50%) scale(.6)}15%{transform:translate(-50%,-50%) scale(1.08)}25%,80%{transform:translate(-50%,-50%) scale(1)}100%{transform:translate(-50%,-80%) scale(.95);visibility:hidden}}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -232,7 +239,7 @@ const svg = k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 const TYPE = {
   "低":{name:"平靜海面",line:"你的傳承航程目前是平靜海面：家庭和資產情況單純，等家庭或資產有變化時再檢視就好。"},
   "中":{name:"準備揚帆",line:"現在是準備揚帆的時候：建議在一到兩年內開始規劃。"},
-  "高":{name:"需要領航",line:"你的傳承航程需要領航：家庭和資產情況比較複雜，建議現在就開始規劃。"}
+  "高":{name:"需要領航",line:"你的傳承航程需要專業人士領航：家庭和資產情況比較複雜，建議現在就開始規劃。"}
 };
 const TIPS = {
   "3":"法定繼承人以外的人，要透過遺贈、生前贈與、保險或信託才拿得到財產。",
@@ -458,6 +465,22 @@ function report(){
   return {lv, ps, hook, sel};
 }
 
+function celebrate(){
+  const colors=["#1a5070","#6a5540","#c9a96b","#d3e2ea","#f5f0ea"];
+  for(let i=0;i<70;i++){
+    const c=document.createElement("div"); c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.background=colors[i%colors.length];
+    c.style.setProperty("--dx",(Math.random()*120-60)+"px");
+    c.style.setProperty("--rot",(Math.random()*720-360)+"deg");
+    c.style.animationDuration=(1.6+Math.random()*1.4)+"s";
+    c.style.animationDelay=(Math.random()*.4)+"s";
+    document.body.appendChild(c); setTimeout(()=>c.remove(),3600);
+  }
+  const a=document.createElement("div"); a.className="arrive";
+  a.innerHTML=`抵達終點！<small>來看看你的航程</small>`;
+  document.body.appendChild(a); setTimeout(()=>a.remove(),1900);
+}
 function showResult(){
   const r = report();
   $("#map").innerHTML = mapHtml(pages().length-1, pages().length);
@@ -477,6 +500,7 @@ function showResult(){
     ${TEAM}
   </div>`;
   window.scrollTo(0,0);
+  celebrate();
 }
 
 function submit(){
