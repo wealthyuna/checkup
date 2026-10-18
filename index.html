@@ -16,7 +16,9 @@
 html,body{margin:0;background:var(--cream) url("img/bg-cream.jpg") center/cover fixed;color:var(--ink);
   font-family:"Noto Sans TC",system-ui,sans-serif;font-size:17px;line-height:1.7}
 .wrap{max-width:620px;margin:0 auto;padding:24px 16px 48px}
-.brand{font-size:14px;color:var(--khaki);letter-spacing:.06em;margin-bottom:18px}
+.brand{font-size:14px;color:var(--khaki);letter-spacing:.06em;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}
+.snd{background:#fffdfa;border:1px solid #d9c7ab;color:var(--navy);width:36px;height:36px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.snd svg{width:18px;height:18px}
 .bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:22px}
 .bar i{display:block;height:100%;width:0;background:var(--navy);transition:width .3s}
 .hero{margin:-26px -20px 22px;padding:34px 20px 28px;border-radius:14px 14px 0 0;color:#fff;
@@ -120,7 +122,7 @@ button{font:inherit;border:0;border-radius:10px;padding:13px 18px;cursor:pointer
 </head>
 <body>
 <div class="wrap">
-  <div class="brand">Yuna律師｜有備而富</div>
+  <div class="brand"><span>Yuna律師｜有備而富</span><button class="snd" id="snd" type="button" aria-label="音效開關"></button></div>
   <div class="map" id="map"></div>
   <div class="card" id="card"></div>
 </div>
@@ -315,7 +317,7 @@ function render(){
           ${BOAT}
         </div>
       </div>
-      <p>財富傳承，這個詞你聽了很多次，還是不知道適不適合你、該如何進行嗎？要不要規劃，跟資產多少沒有直接關係，更重要的是你的家庭結構和財產狀況。</p>
+      <p>財富傳承，這個詞你聽了很多次，卻還是不確定自己適不適合、又該從哪裡開始嗎？即使資產不多，也可能需要規劃財富傳承，關鍵在你的家庭結構和財產狀況。</p>
       <p>這份問卷由律師、地政士、理財規劃顧問一起整理。從家庭成員這座島出發，一關一關勾選符合你的情況，途中還有小知識，準備好啟程了嗎？</p>
       <p class="hint">抵達終點後留下聯絡方式，就能拿到專屬你的財富傳承航海圖：你的現況、是否應該及早開始規劃，以及適合用哪些工具。</p>
       <div class="nav"><button class="primary" data-go="next">出發</button></div>
@@ -363,6 +365,29 @@ function mapHtml(n, cur){
   if(cur>n) h = h.replace(/<\/div>$/, BOAT.replace('class="boat"','class="boat" style="left:-8px"')+"</div>");
   return h;
 }
+/* 音效：網頁內產生，不用音檔；預設開啟、音量小 */
+let soundOn = true, actx = null;
+try{ if(localStorage.getItem("snd")==="off") soundOn=false; }catch(e){}
+function ac(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(actx&&actx.state==="suspended") actx.resume(); return actx; }
+function tone(f,at,dur,type,vol){
+  const c=ac(); if(!c) return;
+  const o=c.createOscillator(), g=c.createGain(), t0=c.currentTime+at;
+  o.type=type||"sine"; o.frequency.value=f;
+  g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(vol||0.06,t0+0.015); g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+  o.connect(g); g.connect(c.destination); o.start(t0); o.stop(t0+dur+0.05);
+}
+const sfx = {
+  tick(on){ if(!soundOn) return; tone(on?740:520,0,0.12,"sine",0.05); },
+  pass(){ if(!soundOn) return; tone(784,0,0.25,"triangle",0.06); tone(1047,0.13,0.35,"triangle",0.06); },
+  arrive(){ if(!soundOn) return; [523,659,784,1047].forEach((f,i)=>tone(f,i*0.11,0.3,"triangle",0.06)); tone(1319,0.46,0.7,"sine",0.05); }
+};
+const SND_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9c1.3 1.6 1.3 4.4 0 6M18.5 6.5c2.7 3 2.7 8 0 11"/></svg>';
+const SND_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+function sndIcon(){ const b=document.getElementById("snd"); if(b) b.innerHTML = soundOn?SND_ON:SND_OFF; }
+document.addEventListener("click",e=>{
+  if(e.target.closest("#snd")){ soundOn=!soundOn; try{localStorage.setItem("snd",soundOn?"on":"off");}catch(err){} sndIcon(); if(soundOn) sfx.tick(true); return; }
+  ac();
+},true);
 function stageHead(pg){
   const n = pages().indexOf(pg);
   const label = pg==="wish" ? "最後一關" : `第 ${n} 關`;
@@ -371,7 +396,7 @@ function stageHead(pg){
 function passToast(cb){
   const d=document.createElement("div"); d.className="toast";
   d.innerHTML=`<div>${BOAT.replace('class="boat"','style="width:36px;height:36px"')}第 ${step} 關過關！<small style="font-weight:500;font-size:14px;opacity:.85">前往下一座島</small></div>`;
-  document.body.appendChild(d);
+  document.body.appendChild(d); sfx.pass();
   setTimeout(()=>{ d.remove(); cb(); },700);
 }
 function navHtml(){
@@ -385,9 +410,9 @@ document.addEventListener("input",e=>{
 });
 document.addEventListener("change",e=>{
   const el = e.target;
-  if(el.type==="checkbox"){ el.checked?checked.add(el.value):checked.delete(el.value); el.closest(".opt").classList.toggle("on",el.checked); }
+  if(el.type==="checkbox"){ el.checked?checked.add(el.value):checked.delete(el.value); el.closest(".opt").classList.toggle("on",el.checked); sfx.tick(el.checked); }
   if(el.type==="radio"){
-    gates[el.name]=el.value;
+    gates[el.name]=el.value; sfx.tick(el.value==="yes");
     if(el.value==="no") ITEMS[el.name].forEach(x=>checked.delete(x.id));
     el.closest(".yn").querySelectorAll("label").forEach(l=>l.classList.toggle("on",l.contains(el)));
   }
@@ -490,6 +515,7 @@ function report(){
 }
 
 function celebrate(){
+  sfx.arrive();
   const colors=["#1a5070","#6a5540","#c9a96b","#d3e2ea","#f5f0ea"];
   for(let i=0;i<110;i++){
     const c=document.createElement("div"); c.className="confetti";
@@ -541,6 +567,7 @@ function submit(){
     onSubmit:()=>{ window.Tally.closePopup(TALLY_FORM_ID); showResult(); }});
 }
 
+sndIcon();
 render();
 </script>
 <script async src="https://tally.so/widgets/embed.js"></script>
