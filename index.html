@@ -380,7 +380,18 @@ function ac(){
     }catch(e){}
   }
   if(actx&&actx.state==="suspended") actx.resume();
+  unlockMedia();
   return actx;
+}
+/* LINE 等 App 內建瀏覽器（iOS WKWebView）會把網頁合成聲音當成鈴聲處理，
+   先播一段無聲的 <audio>，把聲音切到「媒體播放」模式 */
+let mediaUnlocked=false;
+function unlockMedia(){
+  if(mediaUnlocked) return; mediaUnlocked=true;
+  try{
+    const a=new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=");
+    a.loop=true; a.setAttribute("playsinline",""); a.volume=0.01; const p=a.play(); if(p&&p.catch) p.catch(()=>{ mediaUnlocked=false; });
+  }catch(e){ mediaUnlocked=false; }
 }
 function tone(f,at,dur,type,vol){
   const c=ac(); if(!c) return;
