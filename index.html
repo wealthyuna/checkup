@@ -177,6 +177,12 @@ const GATES = [
   {k:"D",q:"你或家人有海外資產或跨國身分嗎？"}
 ];
 const TEAM = `<div class="team"><b>共同設計</b><span>律師　陳品攸</span><span>CFP理財規劃顧問　王春雄</span><span>地政士　吳翊辰</span></div>`;
+const P2_GROUPS = [
+  {h:"遺囑與財產登記",ids:["7","8","9"]},
+  {h:"家庭變化與照顧",ids:["10","11","15"]},
+  {h:"收支與退休",ids:["12","13","16"]},
+  {h:"資產與負債",ids:["14","17"]}
+];
 const TITLES = {A:"不動產",B:"公司與事業",C:"保單",D:"海外與跨國"};
 const LEVEL_LINE = {
   "高":"你的家庭和資產情況比較複雜，建議現在就開始規劃。",
@@ -212,7 +218,7 @@ function render(){
     h = `<div class="hero"><h1>財富傳承健檢</h1></div>
       <p>財富傳承，這個詞你聽了很多次，還是不知道適不適合你、該如何進行嗎？其實，究竟要不要規劃財富傳承，跟你的資產多少沒有直接關係，更重要的是你的家庭結構和財產狀況，跟著這份問卷，一步一步填答，讓你初步窺知財富傳承的全貌。</p>
       <p>這份問卷由律師、地政士、理財規劃顧問一起整理，精選20~40題關於財富傳承的重要問題，勾選符合你的情況，大約花費5 分鐘的時間，就能知道自己的現況、是否應該及早開始規劃，以及適合用哪些工具。</p>
-      <p class="hint">填答完畢，留下聯絡方式，就可以獲得一份簡短報告。</p>
+      <p class="hint">填答完畢，留下聯絡方式，就可以獲得一份專屬你的財富傳承健檢說明</p>
       <div class="nav"><button class="primary" data-go="next">開始</button></div>
       ${TEAM}`;
   } else if(page==="gates"){
@@ -235,9 +241,12 @@ function render(){
       <button class="primary" data-go="submit">留下聯絡方式，看結果</button></div>`;
   } else {
     const head = page==="p1"?"家庭成員":page==="p2"?"財產安排與生活規劃":TITLES[page];
-    h = `<h2>${head}</h2><p class="hint">勾選符合你的項目；都不符合的話，直接按「下一步」。</p>` +
-      ITEMS[page].map(x=>`<label class="opt ${checked.has(x.id)?'on':''}">
-        <input type="checkbox" value="${x.id}" ${checked.has(x.id)?'checked':''}><span>${esc(x.t)}</span></label>`).join("") + navHtml();
+    const opt = x=>`<label class="opt ${checked.has(x.id)?'on':''}">
+        <input type="checkbox" value="${x.id}" ${checked.has(x.id)?'checked':''}><span>${esc(x.t)}</span></label>`;
+    const body = page==="p2"
+      ? P2_GROUPS.map(g=>`<div class="numgrp"><h3>${g.h}</h3>` + g.ids.map(id=>opt(ITEMS.p2.find(x=>x.id===id))).join("") + `</div>`).join("")
+      : ITEMS[page].map(opt).join("");
+    h = `<h2>${head}</h2><p class="hint">勾選符合你的項目；都不符合的話，直接按「下一步」。</p>` + body + navHtml();
   }
   $("#card").innerHTML = h + `<div class="err" id="err"></div>`;
   window.scrollTo(0,0);
