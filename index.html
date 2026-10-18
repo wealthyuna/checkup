@@ -409,7 +409,7 @@ function startMusic(){
   const wg=c.createGain(); wg.gain.value=0.055;
   const lfo=c.createOscillator(); lfo.frequency.value=0.09; const lg=c.createGain(); lg.gain.value=0.05;
   lfo.connect(lg); lg.connect(wg.gain);
-  const fade=c.createGain(); fade.gain.setValueAtTime(0,c.currentTime); fade.gain.linearRampToValueAtTime(1,c.currentTime+6); /* 開頭 6 秒從無聲慢慢變大 */
+  const fade=c.createGain(); fade.gain.setValueAtTime(0,c.currentTime); fade.gain.linearRampToValueAtTime(1,c.currentTime+1.5); /* 開頭 1.5 秒淡入（她說 6 秒太久） */
   noise.connect(hp); hp.connect(lp); lp.connect(wg); wg.connect(fade); fade.connect(master); noise.start(); lfo.start();
   // 海鷗：每 15～25 秒隨機叫一到三聲（合成，先試聽）
   function gull(at){
