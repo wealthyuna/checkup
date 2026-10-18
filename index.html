@@ -20,7 +20,7 @@ html,body{margin:0;background:var(--cream) url("img/bg-cream.jpg") center/cover 
 .bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:22px}
 .bar i{display:block;height:100%;width:0;background:var(--navy);transition:width .3s}
 .hero{margin:-26px -20px 22px;padding:34px 20px 28px;border-radius:14px 14px 0 0;color:#fff;
-  background:var(--navy) url("img/bg-navy.jpg") center/cover}
+  background:var(--navy) url("img/bg-navy.jpg") center 15%/cover}
 .hero h1{color:#fff;margin:0}
 .hero .sub{color:#dfe8ee;font-size:15px;margin:6px 0 0}
 .rhead{margin:-26px -20px 20px;padding:26px 20px 20px;border-radius:14px 14px 0 0;color:#fff;
@@ -28,6 +28,7 @@ html,body{margin:0;background:var(--cream) url("img/bg-cream.jpg") center/cover 
 .rhead .lead{color:#fff;margin:0}
 .rhead .level{background:#fff;color:var(--khaki)}
 .team{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.team span{display:block}
 .team b{display:block;color:var(--khaki);font-weight:500;margin-bottom:4px}
 .card{background:rgba(255,253,250,.94);border:1px solid var(--line);border-radius:14px;padding:26px 20px}
 h1{font-size:28px;line-height:1.35;color:var(--navy);margin:0 0 14px}
@@ -163,7 +164,7 @@ const GATES = [
   {k:"C",q:"有保單嗎？"},
   {k:"D",q:"你或家人有海外資產或跨國身分嗎？"}
 ];
-const TEAM = `<div class="team"><b>共同設計</b>律師陳品攸｜地政士吳翊辰｜國際認證高級理財規劃顧問王春雄</div>`;
+const TEAM = `<div class="team"><b>共同設計</b><span>律師　陳品攸</span><span>地政士　吳翊辰</span><span>國際認證高級理財規劃顧問　王春雄</span></div>`;
 const TITLES = {A:"不動產",B:"公司與事業",C:"保單",D:"海外與跨國"};
 const LEVEL_LINE = {
   "高":"你的家庭和資產情況比較複雜，建議現在就開始規劃。",
