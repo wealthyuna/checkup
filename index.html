@@ -13,13 +13,23 @@
   --ink:#24323b; --muted:#6b7279; --line:#e2d9cd; --card:#fffdfa;
 }
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--cream);color:var(--ink);
+html,body{margin:0;background:var(--cream) url("img/bg-cream.jpg") center/cover fixed;color:var(--ink);
   font-family:"Noto Sans TC",system-ui,sans-serif;font-size:17px;line-height:1.7}
 .wrap{max-width:620px;margin:0 auto;padding:24px 16px 48px}
 .brand{font-size:14px;color:var(--khaki);letter-spacing:.06em;margin-bottom:18px}
 .bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:22px}
 .bar i{display:block;height:100%;width:0;background:var(--navy);transition:width .3s}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 20px}
+.hero{margin:-26px -20px 22px;padding:34px 20px 28px;border-radius:14px 14px 0 0;color:#fff;
+  background:var(--navy) url("img/bg-navy.jpg") center/cover}
+.hero h1{color:#fff;margin:0}
+.hero .sub{color:#dfe8ee;font-size:15px;margin:6px 0 0}
+.rhead{margin:-26px -20px 20px;padding:26px 20px 20px;border-radius:14px 14px 0 0;color:#fff;
+  background:var(--khaki) url("img/bg-khaki.jpg") center 75%/cover}
+.rhead .lead{color:#fff;margin:0}
+.rhead .level{background:#fff;color:var(--khaki)}
+.team{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.team b{display:block;color:var(--khaki);font-weight:500;margin-bottom:4px}
+.card{background:rgba(255,253,250,.94);border:1px solid var(--line);border-radius:14px;padding:26px 20px}
 h1{font-size:28px;line-height:1.35;color:var(--navy);margin:0 0 14px}
 h2{font-size:22px;color:var(--navy);margin:0 0 6px}
 .hint{color:var(--muted);font-size:15px;margin:0 0 18px}
@@ -153,6 +163,7 @@ const GATES = [
   {k:"C",q:"有保單嗎？"},
   {k:"D",q:"你或家人有海外資產或跨國身分嗎？"}
 ];
+const TEAM = `<div class="team"><b>共同設計</b>律師陳品攸｜地政士吳翊辰｜國際認證高級理財規劃顧問王春雄</div>`;
 const TITLES = {A:"不動產",B:"公司與事業",C:"保單",D:"海外與跨國"};
 const LEVEL_LINE = {
   "高":"你的家庭和資產情況比較複雜，建議現在就開始規劃。",
@@ -176,12 +187,14 @@ function render(){
   $("#bar").style.width = Math.round(step/(list.length)*100)+"%";
   let h = "";
   if(page==="intro"){
-    h = `<h1>財富傳承健檢</h1>
-      <p>勾選符合你的情況，大約 5 分鐘。</p>
-      <p class="hint">填完留下聯絡方式，就能看到你的傳承規劃建議。</p>
-      <div class="nav"><button class="primary" data-go="next">開始</button></div>`;
+    h = `<div class="hero"><h1>財富傳承健檢</h1></div>
+      <p>財富傳承適不適合你，跟資產多少沒有直接關係，更重要的是你的家庭結構和財產狀況。</p>
+      <p>這份問卷由律師、地政士、理財顧問一起整理，勾選符合你的情況，大約 5 分鐘，就能知道自己的現況、是否應該及早開始規劃以及適合用哪些工具。</p>
+      <p class="hint">填完留下聯絡方式，就能看到結果。</p>
+      <div class="nav"><button class="primary" data-go="next">開始</button></div>
+      ${TEAM}`;
   } else if(page==="gates"){
-    h = `<h2>你的資產</h2><p class="hint">回答「有」的項目，下一步會再問幾題。</p>` +
+    h = `<h2>你的資產</h2><p class="hint">回答「有」的項目，下一頁勾選細項。</p>` +
       GATES.map(g=>`<div class="gate"><p>${g.q}</p><div class="yn">
         <label class="${gates[g.k]==='yes'?'on':''}"><input type="radio" name="${g.k}" value="yes">有</label>
         <label class="${gates[g.k]==='no'?'on':''}"><input type="radio" name="${g.k}" value="no">沒有</label>
@@ -193,8 +206,8 @@ function render(){
       <div class="nav"><button class="ghost" data-go="back">上一步</button>
       <button class="primary" data-go="submit">留下聯絡方式，看結果</button></div>`;
   } else {
-    const head = page==="p1"?"人":page==="p2"?"事":TITLES[page];
-    h = `<h2>${head}</h2><p class="hint">勾選符合的項目，都不符合就直接下一步。</p>` +
+    const head = page==="p1"?"家庭成員":page==="p2"?"財產安排與生活規劃":TITLES[page];
+    h = `<h2>${head}</h2><p class="hint">勾選符合你的項目；都不符合的話，直接按「下一步」。</p>` +
       ITEMS[page].map(x=>`<label class="opt ${checked.has(x.id)?'on':''}">
         <input type="checkbox" value="${x.id}" ${checked.has(x.id)?'checked':''}><span>${esc(x.t)}</span></label>`).join("") + navHtml();
   }
@@ -278,12 +291,13 @@ function showResult(){
   const r = report();
   $("#bar").style.width = "100%";
   $("#card").innerHTML = `<div class="result">
-    <span class="level lv-${r.lv}">${r.lv}</span>
-    <p class="lead">${LEVEL_LINE[r.lv]}</p>
+    <div class="rhead"><span class="level">${r.lv}</span>
+    <p class="lead">${LEVEL_LINE[r.lv]}</p></div>
     ${r.ps.map(p=>`<p>${esc(p)}</p>`).join("")}
     <p class="hook">${r.hook}</p>
     <a class="cta" href="${BOOKING_URL}" target="_blank" rel="noopener">預約諮詢</a>
     <p class="note">這份結果依你勾選的項目產生，是初步的方向，實際安排要看完整的資產與家庭狀況。</p>
+    ${TEAM}
   </div>`;
   window.scrollTo(0,0);
 }
