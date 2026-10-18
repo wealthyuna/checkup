@@ -377,9 +377,9 @@ function tone(f,at,dur,type,vol){
   o.connect(g); g.connect(c.destination); o.start(t0); o.stop(t0+dur+0.05);
 }
 const sfx = {
-  tick(on){ if(!soundOn) return; tone(on?740:520,0,0.12,"sine",0.05); },
-  pass(){ if(!soundOn) return; tone(784,0,0.25,"triangle",0.06); tone(1047,0.13,0.35,"triangle",0.06); },
-  arrive(){ if(!soundOn) return; [523,659,784,1047].forEach((f,i)=>tone(f,i*0.11,0.3,"triangle",0.06)); tone(1319,0.46,0.7,"sine",0.05); }
+  tick(on){ if(!soundOn) return; tone(on?740:520,0,0.12,"sine",0.12); },
+  pass(){ if(!soundOn) return; tone(784,0,0.25,"triangle",0.14); tone(1047,0.13,0.35,"triangle",0.14); },
+  arrive(){ if(!soundOn) return; [523,659,784,1047].forEach((f,i)=>tone(f,i*0.11,0.3,"triangle",0.14)); tone(1319,0.46,0.7,"sine",0.12); }
 };
 /* 手機喇叭放不出低頻，海浪聲集中在 260–1100Hz、音量提高（10/18 她手機上聽不到） */
 /* 背景音樂：海浪聲＋偶爾海鷗（她 10/18 選），即時合成；按「出發」才開始 */
@@ -393,8 +393,8 @@ function startMusic(){
   const noise=c.createBufferSource(); noise.buffer=buf; noise.loop=true;
   const lp=c.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=1100;
   const hp=c.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=260;
-  const wg=c.createGain(); wg.gain.value=0.08;
-  const lfo=c.createOscillator(); lfo.frequency.value=0.13; const lg=c.createGain(); lg.gain.value=0.06;
+  const wg=c.createGain(); wg.gain.value=0.1;
+  const lfo=c.createOscillator(); lfo.frequency.value=0.13; const lg=c.createGain(); lg.gain.value=0.075;
   lfo.connect(lg); lg.connect(wg.gain);
   noise.connect(hp); hp.connect(lp); lp.connect(wg); wg.connect(master); noise.start(); lfo.start();
   // 海鷗：每 15～25 秒隨機叫一到三聲（合成，先試聽）
@@ -403,7 +403,7 @@ function startMusic(){
     o.type="sawtooth"; f.type="bandpass"; f.frequency.value=1500; f.Q.value=4;
     const vib=c.createOscillator(), vg=c.createGain(); vib.frequency.value=28; vg.gain.value=40; vib.connect(vg); vg.connect(o.frequency);
     o.frequency.setValueAtTime(1250,at); o.frequency.linearRampToValueAtTime(1750,at+0.08); o.frequency.exponentialRampToValueAtTime(820,at+0.42);
-    g.gain.setValueAtTime(0.0001,at); g.gain.exponentialRampToValueAtTime(0.018,at+0.04); g.gain.exponentialRampToValueAtTime(0.0001,at+0.45);
+    g.gain.setValueAtTime(0.0001,at); g.gain.exponentialRampToValueAtTime(0.05,at+0.04); g.gain.exponentialRampToValueAtTime(0.0001,at+0.45);
     o.connect(f); f.connect(g); g.connect(master); o.start(at); vib.start(at); o.stop(at+0.5); vib.stop(at+0.5);
   }
   function gullLoop(){
