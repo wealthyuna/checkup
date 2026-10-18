@@ -66,13 +66,39 @@ button{font:inherit;border:0;border-radius:10px;padding:13px 18px;cursor:pointer
 .num span{flex:1}
 .num input{width:110px;padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit;text-align:right;background:#fff}
 .num em{font-style:normal;color:var(--muted);width:24px}
+.map{position:relative;display:flex;justify-content:space-between;align-items:center;margin:0 6px 22px;height:34px}
+.map:before{content:"";position:absolute;left:0;right:0;top:50%;border-top:2px dashed #c9bba9}
+.map i{position:relative;width:12px;height:12px;border-radius:50%;background:var(--cream);border:2px solid #c9bba9;z-index:1}
+.map i.done{background:var(--navy);border-color:var(--navy)}
+.map i.now{width:30px;height:30px;border:0;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center}
+.map i.now svg{width:18px;height:18px}
+.stage{display:flex;align-items:center;gap:10px;color:var(--khaki);font-size:14px;font-weight:500;letter-spacing:.04em;margin-bottom:4px}
+.ico{width:40px;height:40px;border-radius:50%;background:#eef4f7;color:var(--navy);display:flex;align-items:center;justify-content:center;flex:none}
+.ico svg{width:22px;height:22px}
+.tip{display:none;margin-top:8px;padding:8px 10px;border-left:3px solid var(--khaki);background:#f7f1e8;color:#5a4a38;font-size:14px;line-height:1.6;border-radius:0 8px 8px 0}
+.opt.on .tip{display:block;animation:pop .3s ease}
+.opt span{flex:1}
+@keyframes pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.toast{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:9}
+.toast div{background:var(--navy);color:#fff;padding:16px 26px;border-radius:14px;font-weight:700;font-size:20px;
+  box-shadow:0 10px 30px rgba(26,80,112,.3);animation:pass .75s ease forwards;display:flex;gap:10px;align-items:center}
+.toast svg{width:24px;height:24px}
+@keyframes pass{0%{opacity:0;transform:scale(.8)}25%{opacity:1;transform:scale(1.05)}75%{opacity:1;transform:scale(1)}100%{opacity:0;transform:translateY(-12px)}}
+.rcard{margin:-26px -20px 20px;padding:30px 24px;border-radius:14px 14px 0 0;color:#fff;aspect-ratio:4/5;
+  background:var(--navy) url("img/bg-navy.jpg") center/cover;display:flex;flex-direction:column;justify-content:space-between}
+.rcard .rb{font-size:13px;letter-spacing:.08em;color:#dfe8ee}
+.rcard .tname{font-size:40px;font-weight:700;line-height:1.2;margin:6px 0 10px}
+.rcard .tlv{display:inline-block;background:#fff;color:var(--navy);border-radius:999px;padding:2px 12px;font-size:14px;font-weight:700}
+.rcard .tline{font-size:17px;line-height:1.7;margin:0}
+.rcard .by{font-size:12px;color:#dfe8ee;line-height:1.6}
+.shot{font-size:13px;color:var(--muted);text-align:center;margin:-8px 0 18px}
 [hidden]{display:none!important}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="brand">Yuna律師｜有備而富</div>
-  <div class="bar"><i id="bar"></i></div>
+  <div class="map" id="map"></div>
   <div class="card" id="card"></div>
 </div>
 
@@ -183,6 +209,40 @@ const P2_GROUPS = [
   {h:"收支與退休",ids:["12","13","16"]},
   {h:"資產與負債",ids:["14","17"]}
 ];
+const ICON = {
+  p1:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 20c0-2.5 1-4.5 3-4.5s3 2 3 4.5"/>',
+  p2:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+  gates:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+  A:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+  B:'<rect x="4" y="7" width="10" height="14"/><path d="M14 11h6v10h-6M7 11h4M7 15h4"/>',
+  C:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  D:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+  nums:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M8 16h2M12 16h2"/>',
+  wish:'<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>',
+  boat:'<path d="M3 16h18l-2.5 4h-13z"/><path d="M12 3v13"/><path d="M12 4l6 9h-6"/>'
+};
+const svg = k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg>`;
+const TYPE = {
+  "低":{name:"平靜海面",line:"你的傳承航程目前是平靜海面：家庭和資產情況單純，等家庭或資產有變化時再檢視就好。"},
+  "中":{name:"準備揚帆",line:"現在是準備揚帆的時候：建議在一到兩年內開始規劃。"},
+  "高":{name:"需要領航",line:"你的傳承航程需要領航：家庭和資產情況比較複雜，建議現在就開始規劃。"}
+};
+const TIPS = {
+  "3":"法定繼承人以外的人，要透過遺贈、生前贈與、保險或信託才拿得到財產。",
+  "4":"繼子女沒有被收養，就不是法定繼承人。",
+  "5":"沒有子女的話，父母是繼承人；父母都不在了，才輪到兄弟姊妹。",
+  "7":"自書遺囑要全文親筆寫，打字列印的不算。",
+  "8":"登記名義人過世，財產在名義上仍是他的遺產，實際出資人要向繼承人舉證甚至透過訴訟才拿得回來。",
+  "9":"繼承人只以繼承所得的遺產為限，清償被繼承人的債務，保證債務也一樣。",
+  "11":"意定監護要在本人意識清楚時，經過公證才成立。",
+  "14":"115年每人每年有 244 萬元的贈與稅免稅額。",
+  "17":"繼承人可以在知道繼承開始後 3 個月內拋棄繼承。",
+  "A1":"繼承後一直沒分割，代代傳下去，共有人會越來越多，未來要處分將困難重重。",
+  "A9":"遺產稅原則上要在繳款書送達後 2 個月內繳清，也可以申請分期或實物抵繳。",
+  "B1":"股東過世，股份由他的繼承人繼承，可能造成股東組成越來越複雜。",
+  "C1":"保單沒有指定受益人的話，被保險人身故後，保險金會變成被保險人的遺產。",
+  "D2":"經常居住在台灣的國民，境內外的財產都要申報遺產稅。"
+};
 const TITLES = {A:"不動產",B:"公司與事業",C:"保單",D:"海外與跨國"};
 const LEVEL_LINE = {
   "高":"你的家庭和資產情況比較複雜，建議現在就開始規劃。",
@@ -212,7 +272,8 @@ const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;
 
 function render(){
   const list = pages(), page = list[step];
-  $("#bar").style.width = Math.round(step/(list.length)*100)+"%";
+  $("#map").innerHTML = list.slice(1).map((pg,i)=> i+1<step ? '<i class="done"></i>' : i+1===step ? `<i class="now">${svg("boat")}</i>` : '<i></i>').join("") + (step===0?"":"") ;
+  $("#map").hidden = step===0;
   let h = "";
   if(page==="intro"){
     h = `<div class="hero"><h1>財富傳承健檢</h1></div>
@@ -222,19 +283,19 @@ function render(){
       <div class="nav"><button class="primary" data-go="next">開始</button></div>
       ${TEAM}`;
   } else if(page==="gates"){
-    h = `<h2>你的資產</h2><p class="hint">回答「有」的項目，下一頁勾選細項。</p>` +
+    h = stageHead("gates") + `<h2>你的資產</h2><p class="hint">回答「有」的項目，下一頁勾選細項。</p>` +
       GATES.map(g=>`<div class="gate"><p>${g.q}</p><div class="yn">
         <label class="${gates[g.k]==='yes'?'on':''}"><input type="radio" name="${g.k}" value="yes">有</label>
         <label class="${gates[g.k]==='no'?'on':''}"><input type="radio" name="${g.k}" value="no">沒有</label>
       </div></div>`).join("") + navHtml();
   } else if(page==="nums"){
-    h = `<h2>幾個數字</h2>
+    h = stageHead("nums") + `<h2>幾個數字</h2>
       <p>這一頁的數字是為了幫你估算遺產稅，以及退休後需要準備多少錢，讓報告更貼近你的情況。填大概數字即可，單位是萬元。</p>
       <p class="hint">全部選填，不想填可以直接按「下一步」。</p>` +
       ["資產","退休"].map(g=>`<div class="numgrp"><h3>${g}</h3>` + NUMS.filter(n=>n.g===g).map(n=>
         `<label class="num"><span>${n.t}</span><input type="number" inputmode="decimal" min="0" step="any" data-num="${n.k}" value="${nums[n.k]??""}"><em>${n.u}</em></label>`).join("") + `</div>`).join("") + navHtml();
   } else if(page==="wish"){
-    h = `<h2>最後一題</h2><p class="hint">選填</p>
+    h = stageHead("wish") + `<h2>最後一題</h2><p class="hint">選填</p>
       <p>你現在最想先處理的一件事是什麼？</p>
       <textarea id="wish" maxlength="500">${esc(wish)}</textarea>
       <div class="nav"><button class="ghost" data-go="back">上一步</button>
@@ -242,14 +303,25 @@ function render(){
   } else {
     const head = page==="p1"?"家庭成員":page==="p2"?"財產安排與生活規劃":TITLES[page];
     const opt = x=>`<label class="opt ${checked.has(x.id)?'on':''}">
-        <input type="checkbox" value="${x.id}" ${checked.has(x.id)?'checked':''}><span>${esc(x.t)}</span></label>`;
+        <input type="checkbox" value="${x.id}" ${checked.has(x.id)?'checked':''}><span>${esc(x.t)}${TIPS[x.id]?`<span class="tip">小知識｜${TIPS[x.id]}</span>`:""}</span></label>`;
     const body = page==="p2"
       ? P2_GROUPS.map(g=>`<div class="numgrp"><h3>${g.h}</h3>` + g.ids.map(id=>opt(ITEMS.p2.find(x=>x.id===id))).join("") + `</div>`).join("")
       : ITEMS[page].map(opt).join("");
-    h = `<h2>${head}</h2><p class="hint">勾選符合你的項目；都不符合的話，直接按「下一步」。</p>` + body + navHtml();
+    h = stageHead(page) + `<h2>${head}</h2><p class="hint">勾選符合你的項目；都不符合的話，直接按「下一步」。</p>` + body + navHtml();
   }
   $("#card").innerHTML = h + `<div class="err" id="err"></div>`;
   window.scrollTo(0,0);
+}
+function stageHead(pg){
+  const n = pages().indexOf(pg);
+  const label = pg==="wish" ? "最後一關" : `第 ${n} 關`;
+  return `<div class="stage"><span class="ico">${svg(pg)}</span>${label}</div>`;
+}
+function passToast(cb){
+  const d=document.createElement("div"); d.className="toast";
+  d.innerHTML=`<div>${svg("boat")}第 ${step} 關過關！</div>`;
+  document.body.appendChild(d);
+  setTimeout(()=>{ d.remove(); cb(); },700);
 }
 function navHtml(){
   return `<div class="nav"><button class="ghost" data-go="back">上一步</button>
@@ -276,7 +348,8 @@ document.addEventListener("click",e=>{
   if(go==="back"){ step=Math.max(0,step-1); render(); return; }
   if(go==="next"){
     if(page==="gates" && GATES.some(g=>!gates[g.k])){ $("#err").textContent="每一題都請選「有」或「沒有」。"; return; }
-    step++; render(); return;
+    if(step===0){ step++; render(); return; }
+    passToast(()=>{ step++; render(); }); return;
   }
   if(go==="submit") submit();
 });
@@ -367,10 +440,16 @@ function report(){
 
 function showResult(){
   const r = report();
-  $("#bar").style.width = "100%";
+  $("#map").innerHTML = pages().slice(1).map(()=>'<i class="done"></i>').join("") + `<i class="now">${svg("wish")}</i>`;
+  const ty = TYPE[r.lv];
   $("#card").innerHTML = `<div class="result">
-    <div class="rhead"><span class="level">${r.lv}</span>
-    <p class="lead">${LEVEL_LINE[r.lv]}</p></div>
+    <div class="rcard">
+      <div class="rb">有備而富｜財富傳承健檢</div>
+      <div><div class="tname">${ty.name}</div><span class="tlv">傳承規劃需求：${r.lv}</span></div>
+      <p class="tline">${ty.line}</p>
+      <div class="by">陳品攸律師・王春雄顧問・吳翊辰地政士</div>
+    </div>
+    <p class="shot">可以截圖這張卡片分享</p>
     ${r.ps.map(p=>`<p>${esc(p)}</p>`).join("")}
     <p class="hook">${r.hook}</p>
     <a class="cta" href="${BOOKING_URL}" target="_blank" rel="noopener">預約諮詢</a>
