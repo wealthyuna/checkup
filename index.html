@@ -121,6 +121,20 @@ button{font:inherit;border:0;border-radius:10px;padding:13px 18px;cursor:pointer
   font-weight:700;font-size:22px;box-shadow:0 12px 30px rgba(26,80,112,.25);animation:arrive 2.6s ease forwards}
 .arrive small{display:block;font-size:14px;font-weight:500;color:var(--khaki)}
 @keyframes arrive{0%{transform:translate(-50%,-50%) scale(.6)}15%{transform:translate(-50%,-50%) scale(1.08)}25%,80%{transform:translate(-50%,-50%) scale(1)}100%{transform:translate(-50%,-80%) scale(.95);visibility:hidden}}
+.ico .sp{width:32px;height:32px}
+.supply{display:inline-flex;align-items:center;gap:4px;margin-left:10px;padding:1px 10px 1px 4px;border-radius:999px;background:#f7f1e8;border:1px solid #e6d8c3;color:var(--khaki);font-size:14px;font-weight:700;vertical-align:4px}
+.supply .sp{width:24px;height:24px}
+.supply.bump{animation:bump .35s ease}
+@keyframes bump{50%{transform:scale(1.18)}}
+.opt,.num{position:relative}
+.plus{position:absolute;left:8px;top:-16px;color:var(--khaki);font-weight:700;font-size:20px;pointer-events:none;animation:plus .85s ease-out forwards}
+@keyframes plus{0%{opacity:0;transform:translateY(6px) scale(.8)}20%{opacity:1;transform:translateY(0) scale(1.1)}100%{opacity:0;transform:translateY(-20px)}}
+.bag{background:#f7f1e8;border:1px solid #e6d8c3;border-radius:14px;padding:14px 16px;margin:0 0 18px}
+.bag h3{font-size:16px;color:var(--khaki);margin:0 0 10px}
+.bag .its{display:flex;flex-wrap:wrap;gap:10px 16px}
+.bag .its span{display:flex;align-items:center;gap:6px;font-size:15px;color:var(--ink);font-weight:500}
+.bag .sp{width:34px;height:34px}
+.bag p{margin:10px 0 0;font-size:15px;color:var(--navy);font-weight:500}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -140,30 +154,30 @@ const BOOKING_URL = "https://tally.so/r/0Qp84A";
 const ITEMS = {
   p1:[
     {id:"1",t:"有兩位以上的繼承人",short:"繼承人有兩位以上",
-      will:"先指定每位繼承人分到哪些財產",ins:"指定受益人，決定保險金給誰、各給多少",trust:"由受託人依你訂的條件，把財產交給每位繼承人"},
+      will:"先指定每位繼承人分到哪些財產",ins:"寫明保險金給誰、各給多少",trust:"依你訂的條件，把財產交給每位家人"},
     {id:"2",t:"繼承人年紀輕，或有需要特別照顧、保護的情況",short:"有需要特別照顧的家人",
-      trust:"讓需要照顧的家人分期領取，錢由受託人管理"},
-    {id:"3",t:"有法定繼承人以外想照顧的對象",short:"想照顧的人不是法定繼承人",
-      will:"把財產留給不是法定繼承人的人",trust:"把財產留給不是法定繼承人的人，由受託人依你訂的條件交付"},
-    {id:"4",t:"再婚家庭，或有繼子女、非婚生子女",short:"家庭成員有再婚或繼子女、非婚生子女",c:1,
-      will:"事先講清楚每個人分到什麼",ins:"指定受益人，讓你想照顧的家人拿到保險金",trust:"依你訂的條件分配給每位家人，不必等繼承時再協商"},
-    {id:"5",t:"單身或頂客族",short:"沒有子女",
-      will:"決定財產留給誰；沒有子女時，遺產依序由父母、兄弟姊妹、祖父母繼承，有配偶的話配偶也一起繼承",ins:"指定受益人，把保險金留給你想照顧的人",trust:"依你訂的條件照顧特定的人"},
+      trust:"讓需要照顧的家人分期領取"},
+    {id:"3",t:"有想照顧的人，但對方不會繼承你的財產（例如沒結婚的伴侶、朋友）",short:"想照顧的人不會繼承你的財產",
+      will:"把財產留給不會繼承的人",trust:"把財產留給不會繼承的人，依你訂的條件交給他"},
+    {id:"4",t:"你與另一半是再婚、或有另一半帶來的孩子、沒有結婚生下的孩子",short:"家裡有再婚，或有另一半帶來的孩子、沒有結婚生下的孩子",c:1,
+      will:"事先講清楚每個人分到什麼",ins:"寫明保險金給你想照顧的家人",trust:"依你訂的條件分配給每位家人，不必等繼承時再協商"},
+    {id:"5",t:"單身，或結婚但沒有小孩",short:"沒有子女",
+      will:"決定財產留給誰；沒有子女時，遺產依序由父母、兄弟姊妹、祖父母繼承，有配偶的話配偶也一起繼承",ins:"寫明保險金給你想照顧的人",trust:"依你訂的條件照顧特定的人"},
     {id:"6",t:"繼承人之間關係疏離或緊張",short:"繼承人之間關係緊張",c:1,
-      will:"指定遺囑執行人，由你信任的人執行分配",trust:"由受託人依你訂的條件交付，不需要繼承人之間協商"}
+      will:"在遺囑裡指定一位你信任的人，負責照遺囑分配",trust:"依你訂的條件交付，家人之間不用再協商"}
   ],
   p2:[
     {id:"7",t:"還沒立遺囑，或遺囑立了很久沒有再看過",short:"還沒有立遺囑",
-      will:"依你現在的家庭和資產安排財產怎麼分",other:"目前沒有任何安排的話，遺產由全體繼承人共同繼承，要全體同意才能分割"},
-    {id:"8",t:"有借名登記、人頭帳戶，或財產登記名義人和實際出資人不同的情形",short:"有借名登記的財產",c:1,
-      other:"有借名登記的財產，可以在生前回復登記或留下書面約定，避免家人日後對財產歸屬有爭議"},
-    {id:"9",t:"替別人作保，或用你的財產替別人擔保",short:"有替別人作保或擔保",
-      other:"替別人作保或擔保的責任，可以整理成清單讓家人知道"},
+      will:"依你現在的家庭和資產安排財產怎麼分",other:"目前沒有任何安排的話，遺產由全部繼承人一起持有，要所有人都同意才能分"},
+    {id:"8",t:"有錢是你出的、財產卻登記在別人名下的情形（或反過來）",short:"有財產登記在別人名下",c:1,
+      other:"有財產登記在別人名下的話，可以趁現在把登記改回出錢的人名下，或寫下書面約定，避免家人日後對財產是誰的有爭議"},
+    {id:"9",t:"替別人作保，或拿你的房子、存款幫別人借錢",short:"有替別人作保或拿財產幫別人借錢",
+      other:"替別人作保或拿財產幫別人借錢的責任，可以整理成清單讓家人知道"},
     {id:"10",t:"你或家人正面臨結婚、離婚、重病、退休等重大變化",short:"家裡正有重大變化",
-      other:"家裡有重大變化時，保單受益人、信託和財產登記都要重新檢視"},
+      other:"家裡有重大變化時，保單的保險金給誰、信託和財產登記都要重新看過"},
     {id:"11",t:"擔心失能或失智時，沒有人能依照你的意思管理財產、安排照顧",short:"擔心失能或失智",special:"care"},
     {id:"12",t:"還沒算過退休後每個月要花多少、錢從哪裡來",short:"還沒算過退休金",
-      other:"退休後每月收入從哪裡來，可以先做退休現金流試算"},
+      other:"可以先算算退休後每個月的收入和支出，看錢夠不夠用"},
     {id:"13",t:"不清楚家裡全年收入、支出和負債的整體狀況",short:"家裡收支不清楚",
       other:"規劃前先盤點家裡的收入、支出和負債"},
     {id:"15",t:"有需要你提供經濟支持的家人",short:"有需要你經濟支持的家人",
@@ -171,48 +185,48 @@ const ITEMS = {
     {id:"16",t:"每年收入扣掉生活支出和還款後，所剩不多或不夠用",short:"每年收支結餘不多",
       other:"每年收支結餘不多，規劃傳承前先調整收支和還款安排"},
     {id:"17",t:"負債接近或超過資產",short:"負債接近或超過資產",c:1,
-      other:"負債接近或超過資產，可以先盤點負債，繼承人是以繼承所得的遺產為限清償債務"},
+      other:"負債接近或超過資產，可以先盤點負債；家人繼承後要還的債，最多就是繼承到的財產"},
     {id:"14",t:"名下資產合計約 2,000 萬元以上",short:"資產規模較大",c:1,
-      ins:"預留一筆現金讓家人繳遺產稅",other:"資產規模較大，可以生前分年贈與，分散移轉"}
+      ins:"預留一筆現金讓家人繳遺產稅",other:"資產規模較大，可以趁現在每年送一部分給家人，分好幾年慢慢移轉"}
   ],
   A:[
-    {id:"A1",t:"和家人共同持有，或繼承多年還沒分割",short:"有共有或還沒分割的不動產",c:1,
-      other:"共有或還沒分割的不動產，可以協議分割或整合持分，避免下一代共有人數更多"},
-    {id:"A2",t:"土地和建物分屬不同人，或有人使用、有人持有，權利義務不清楚",short:"不動產的產權或使用關係不清楚",
-      other:"產權或使用關係不清楚的不動產，先釐清登記和使用約定"},
-    {id:"A3",t:"有家族祖產、農地或其他特殊用地",short:"有祖產或農地",c:1,
-      other:"祖產或農地移轉前，先確認是否符合農業用地免徵遺產稅、贈與稅的條件"},
-    {id:"A4",t:"不確定房屋稅、地價稅的優惠是否還符合",short:"不確定不動產稅的優惠",
-      other:"房屋稅、地價稅的優惠，可以確認是否還適用"},
-    {id:"A5",t:"想把不動產給家人，但不清楚贈與、買賣、繼承各要繳哪些稅",short:"想把不動產給家人",
-      other:"不動產要給家人，可以先比較贈與、買賣、繼承的稅負"},
+    {id:"A1",t:"和家人一起持有，或繼承很多年還沒談過各自的所有權",short:"有和家人一起持有、還沒分清楚的房子或土地",c:1,
+      other:"和家人一起持有的房子或土地，可以和家人談好怎麼分，或把各自的份額集中到少數人手上，避免下一代一起持有的人更多"},
+    {id:"A2",t:"土地和房子登記在不同人名下，或住的人和登記的人不同",short:"房子或土地的登記和使用的人不同",
+      other:"登記和使用的人不同的話，先弄清楚登記在誰名下、誰在用、當初怎麼約定"},
+    {id:"A3",t:"有家族祖產、農地，或其他用途有限制的土地",short:"有祖產或農地",c:1,
+      other:"祖產或農地移轉前，先確認能不能適用農地不用繳遺產稅、贈與稅的規定"},
+    {id:"A4",t:"不確定房屋稅、地價稅的自住優惠還能不能用",short:"不確定房屋稅、地價稅的優惠",
+      other:"房屋稅、地價稅的自住優惠，可以確認還能不能用"},
+    {id:"A5",t:"想把房子或土地給家人，但不清楚送的、賣的、繼承的各要繳哪些稅",short:"想把房子或土地給家人",
+      other:"房子或土地要給家人，可以先比較送的、賣的、繼承的各要繳多少稅"},
     {id:"A6",t:"想把房子留給子女，但希望可以住到老",short:"房子希望住到老再給子女",
       will:"指定房子之後由子女取得，生前房子仍在你名下",trust:"約定房子生前仍由你居住使用，之後再交給子女"},
     {id:"A7",t:"每月房貸或其他貸款讓你有壓力",short:"房貸有壓力",
       other:"房貸壓力可以從檢視貸款條件開始"},
-    {id:"A8",t:"想運用名下不動產取得資金",short:"想運用不動產取得資金",
-      other:"想運用不動產取得資金，可以先評估融資條件，不影響之後的傳承安排"},
-    {id:"A9",t:"資產以不動產為主，家人可能沒有足夠現金繳遺產稅",short:"資產以不動產為主",
+    {id:"A8",t:"想拿房子或土地去借錢、換現金",short:"想拿房子或土地換現金",
+      other:"想拿房子或土地換現金，可以先了解能借多少、利率多少，不影響之後的傳承安排"},
+    {id:"A9",t:"財產大多是房子或土地，家人可能沒有足夠現金繳遺產稅",short:"財產大多是房子或土地",
       ins:"讓家人有現金繳遺產稅，不必為了繳稅賣房子"},
-    {id:"A10",t:"擔心繼承後變成多人共有，難以處理",short:"擔心不動產繼承後變成多人共有",
-      will:"指定不動產由一個人取得，避免變成多人共有",ins:"照顧沒有分到不動產的家人"}
+    {id:"A10",t:"擔心繼承後一間房子變成好幾個人一起持有，很難處理",short:"擔心房子繼承後變成好幾個人一起持有",
+      will:"指定房子或土地由一個人繼承，避免好幾個人一起持有",ins:"照顧沒有分到房子或土地的家人"}
   ],
   B:[
-    {id:"B1",t:"公司還有其他股東或合夥人",short:"公司還有其他股東",c:1,
-      other:"公司有其他股東，可以用股東協議先約定股東過世或退出時股份怎麼處理"},
-    {id:"B2",t:"事業正值高峰期（資產價值最高、具有主導權及控制權）",short:"事業正在高峰",
-      other:"事業正在高峰，可以趁你還有主導權的時候安排股份移轉"},
-    {id:"B3",t:"有經營權、品牌或其他智慧財產權",short:"有經營權或品牌要交棒",
-      will:"指定股份由接班的人取得",ins:"照顧沒有接班的家人",other:"股份也可以生前分次移轉給接班的人"},
+    {id:"B1",t:"公司還有其他股東，或跟別人合資做生意",short:"公司還有其他股東",c:1,
+      other:"公司有其他股東，股東之間可以先簽好約定，寫明有人過世或退出時股份怎麼處理"},
+    {id:"B2",t:"事業正在高峰，公司現在最值錢，你也還能做主",short:"事業正在高峰",
+      other:"事業正在高峰，可以趁你還能做主的時候，安排股份交給誰"},
+    {id:"B3",t:"有公司要交棒，或有品牌、商標、專利",short:"有公司或品牌要交棒",
+      will:"指定股份由接班的人取得",ins:"照顧沒有接班的家人",other:"股份也可以趁現在分次轉給接班的人"},
     {id:"B4",t:"想把經營理念、價值觀、家訓或家族歷史與故事傳下去",short:"想傳下經營理念和家訓",
-      other:"想傳下的理念和家訓，可以寫成家族憲章"},
+      other:"想傳下的理念和家訓，可以寫成家人共同遵守的書面約定（家族憲章）"},
     {id:"B5",t:"還沒決定由誰接手經營",short:"接班人還沒決定",
-      other:"接班人還沒決定，可以把經營和持股分開想：經營交給專業經理人，股份仍由家人持有"}
+      other:"接班人還沒決定，可以把經營和持股分開想：公司交給外聘的專業人士經營，股份仍由家人持有"}
   ],
   C:[
-    {id:"C1",t:"要保人、被保險人、受益人的安排多年沒有檢視",short:"保單多年沒有檢視",
-      ins:"重新確認受益人是不是你現在想照顧的人"},
-    {id:"C2",t:"不確定保障金額夠不夠家人用",short:"不確定保額夠不夠",
+    {id:"C1",t:"保單上誰繳錢、保誰、錢給誰，很多年沒有重新看過",short:"保單很多年沒有重新看過",
+      ins:"重新確認保險金給的人，是不是你現在想照顧的人"},
+    {id:"C2",t:"不確定保險理賠的錢夠不夠家人用",short:"不確定保額夠不夠",
       ins:"檢視保額夠不夠支應家人的生活費和繳稅"}
   ],
   D:[
@@ -238,8 +252,8 @@ const GROUPS = {p2:[
   {h:"收支與退休",ids:["12","13","16"]},
   {h:"資產與負債",ids:["14","17"]}
 ], A:[
-  {h:"產權與共有",ids:["A1","A2","A3","A10"]},
-  {h:"移轉與稅負",ids:["A4","A5","A6","A9"]},
+  {h:"登記與持有",ids:["A1","A2","A3","A10"]},
+  {h:"移轉與繳稅",ids:["A4","A5","A6","A9"]},
   {h:"貸款與資金",ids:["A7","A8"]}
 ]};
 const ICON = {
@@ -254,27 +268,40 @@ const ICON = {
   wish:'<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>',
   boat:'<path d="M3 16h18l-2.5 4h-13z"/><path d="M12 3v13"/><path d="M12 4l6 9h-6"/>'
 };
-const svg = k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg>`;
+const svg = k=>SUP[k] ? SUP[k].svg : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg>`;
+/* 出航物資：每一區一種，勾一項拿一個；畫法跟小船一樣用品牌色塊填色 */
+const S = b=>`<svg class="sp" viewBox="0 0 48 48">${b}</svg>`;
+const SUP = {
+  p1:{n:"羅盤",svg:S(`<circle cx="24" cy="6" r="3" fill="none" stroke="#6a5540" stroke-width="2"/><circle cx="24" cy="26" r="18" fill="#c9a96b"/><circle cx="24" cy="26" r="14" fill="#fffdfa" stroke="#6a5540" stroke-width="1.4"/><path d="M24 14v2.5M24 35.5V38M12 26h2.5M33.5 26H36" stroke="#d9c7ab" stroke-width="1.6" stroke-linecap="round"/><path d="M24 15l4.2 11h-8.4z" fill="#1a5070"/><path d="M24 37l-4.2-11h8.4z" fill="#d9c7ab"/><circle cx="24" cy="26" r="2.4" fill="#6a5540"/>`)},
+  p2:{n:"航海日誌",svg:S(`<path d="M37 12h3.5v28H37" fill="#fffdfa" stroke="#d9c7ab" stroke-width="1.2"/><rect x="9" y="8" width="29" height="34" rx="3" fill="#1a5070"/><rect x="9" y="8" width="6" height="34" rx="2" fill="#6a5540"/><rect x="19" y="14" width="14" height="4" rx="2" fill="#c9a96b"/><path d="M19 26c2.3-2.4 4.7-2.4 7 0s4.7 2.4 7 0M19 32c2.3-2.4 4.7-2.4 7 0s4.7 2.4 7 0" stroke="#fffdfa" stroke-width="1.6" fill="none" stroke-linecap="round"/>`)},
+  A:{n:"錨",svg:S(`<circle cx="24" cy="9" r="4.2" fill="none" stroke="#6a5540" stroke-width="2.8"/><path d="M24 13.5V39" stroke="#1a5070" stroke-width="4.2" stroke-linecap="round"/><path d="M15.5 20h17" stroke="#1a5070" stroke-width="3.6" stroke-linecap="round"/><path d="M10 29c1.5 7 7 11 14 11s12.5-4 14-11" fill="none" stroke="#1a5070" stroke-width="3.8" stroke-linecap="round"/><path d="M6.5 31.5l3-6 5 4.2zM41.5 31.5l-3-6-5 4.2z" fill="#1a5070"/>`)},
+  B:{n:"船舵",svg:S(`<path d="M24 4v40M4 24h40M9.9 9.9l28.2 28.2M38.1 9.9L9.9 38.1" stroke="#6a5540" stroke-width="3.2" stroke-linecap="round"/><circle cx="24" cy="24" r="13" fill="none" stroke="#6a5540" stroke-width="4.5"/><circle cx="24" cy="24" r="13" fill="none" stroke="#c9a96b" stroke-width="1.2"/><circle cx="24" cy="24" r="5" fill="#1a5070"/><circle cx="24" cy="24" r="1.8" fill="#c9a96b"/>`)},
+  C:{n:"救生圈",svg:S(`<circle cx="24" cy="24" r="15" fill="none" stroke="#fffdfa" stroke-width="10"/><circle cx="24" cy="24" r="15" fill="none" stroke="#1a5070" stroke-width="10" stroke-dasharray="11.78 11.78" transform="rotate(-22 24 24)"/><circle cx="24" cy="24" r="20" fill="none" stroke="#6a5540" stroke-width="1.2"/><circle cx="24" cy="24" r="10" fill="none" stroke="#6a5540" stroke-width="1.2"/><path d="M24 2.5v4M24 41.5v4M2.5 24h4M41.5 24h4" stroke="#6a5540" stroke-width="2.4" stroke-linecap="round"/>`)},
+  D:{n:"望遠鏡",svg:S(`<path d="M21 31l-5.5 12M27 31l5.5 12M24 31v12" stroke="#6a5540" stroke-width="2.2" stroke-linecap="round"/><g transform="rotate(-24 24 22)"><rect x="5" y="18" width="13" height="8" rx="2" fill="#6a5540"/><rect x="17" y="16" width="14" height="12" rx="2" fill="#1a5070"/><rect x="30" y="13.5" width="12" height="17" rx="3" fill="#1a5070"/><rect x="16.5" y="16" width="2.6" height="12" fill="#c9a96b"/><rect x="30" y="13.5" width="3" height="17" fill="#c9a96b"/><rect x="40" y="15.5" width="2" height="13" rx="1" fill="#d3e2ea"/></g>`)},
+  nums:{n:"藏寶箱",svg:S(`<circle cx="18" cy="17" r="4.5" fill="#c9a96b" stroke="#6a5540"/><circle cx="27" cy="14.5" r="4.5" fill="#e3c98f" stroke="#6a5540"/><circle cx="33" cy="18" r="3.8" fill="#c9a96b" stroke="#6a5540"/><path d="M7 23c0-7 6-10.5 17-10.5S41 16 41 23z" fill="#6a5540"/><rect x="7" y="22" width="34" height="18" rx="2.5" fill="#8a6e52"/><path d="M13 13.5V40M35 13.5V40" stroke="#1a5070" stroke-width="3"/><rect x="7" y="22" width="34" height="3.2" fill="#1a5070"/><rect x="20.5" y="21" width="7" height="9" rx="2" fill="#c9a96b" stroke="#6a5540"/><circle cx="24" cy="25.5" r="1.2" fill="#6a5540"/>`)}
+};
+const supCount = pg=> pg==="nums" ? (Object.keys(nums).length?1:0) : (ITEMS[pg]||[]).filter(x=>checked.has(x.id)).length;
+const supBadge = pg=>`<span class="supply" id="sup">${SUP[pg].svg}${SUP[pg].n} ×${supCount(pg)}</span>`;
 const TYPE = {
   "低":{name:"平靜海面",line:"你的傳承航程目前是平靜海面：家庭和資產情況單純，等家庭或資產有變化時再檢視就好。"},
   "中":{name:"準備揚帆",line:"現在是準備揚帆的時候：建議在一到兩年內開始規劃。"},
   "高":{name:"需要領航",line:"你的傳承航程需要專業人士領航：家庭和資產情況比較複雜，建議現在就開始規劃。"}
 };
 const TIPS = {
-  "3":"法定繼承人以外的人，要透過遺贈、生前贈與、保險或信託才拿得到財產。",
-  "4":"繼子女沒有被收養，就不是法定繼承人。",
+  "3":"會繼承財產的只有配偶、子孫、父母、兄弟姊妹、祖父母，其他人要靠遺囑、生前送給他、保險或信託，才拿得到你的財產。",
+  "4":"另一半帶來的孩子，沒有辦收養的話，不會繼承你的財產。",
   "5":"沒有子女的話，父母是繼承人；父母都不在了，才輪到兄弟姊妹。",
-  "7":"自書遺囑要全文親筆寫，打字列印的不算。",
-  "8":"登記名義人過世，財產在名義上仍是他的遺產，實際出資人要向繼承人舉證甚至透過訴訟才拿得回來。",
-  "9":"繼承人只以繼承所得的遺產為限，清償被繼承人的債務，保證債務也一樣。",
-  "11":"意定監護要在本人意識清楚時，經過公證才成立。",
-  "14":"115年每人每年有 244 萬元的贈與稅免稅額。",
-  "17":"繼承人可以在知道繼承開始後 3 個月內拋棄繼承。",
-  "A1":"繼承後一直沒分割，代代傳下去，共有人會越來越多，未來要處分將困難重重。",
-  "A9":"遺產稅原則上要在繳款書送達後 2 個月內繳清，也可以申請分期或實物抵繳。",
-  "B1":"股東過世，股份由他的繼承人繼承，可能造成股東組成越來越複雜。",
-  "C1":"保單沒有指定受益人的話，被保險人身故後，保險金會變成被保險人的遺產。",
-  "D2":"經常居住在台灣的國民，境內外的財產都要申報遺產稅。"
+  "7":"自己寫的遺囑要整份親手寫，打字印出來的不算。",
+  "8":"登記的人過世，財產就算是他的遺產，出錢的人要拿出證據，甚至打官司，才拿得回來。",
+  "9":"家人繼承後要還的債，最多就是繼承到的財產，作保的債也一樣。",
+  "11":"先指定將來照顧你的人（意定監護），要趁意識清楚時到公證人那裡辦。",
+  "14":"115 年每個人每年送出 244 萬元以內，不用繳贈與稅。",
+  "17":"家人知道自己可以繼承後 3 個月內，可以向法院表示放棄繼承。",
+  "A1":"繼承後一直沒分清楚，代代傳下去，一起持有的人會越來越多，以後要賣或處理會困難重重。",
+  "A9":"遺產稅原則上要在收到繳款單後 2 個月內繳清，也可以申請分期，或用土地等財產抵繳。",
+  "B1":"股東過世，股份會由他的家人繼承，公司股東可能越來越多、越來越複雜。",
+  "C1":"保單沒有寫明錢給誰的話，被保險的人過世後，保險金會變成他的遺產。",
+  "D2":"平常住在台灣的國人，台灣和國外的財產都要算進遺產稅。"
 };
 const TITLES = {A:"不動產",B:"公司與事業",C:"保單",D:"海外與跨國"};
 const LEVEL_LINE = {
@@ -333,9 +360,9 @@ function render(){
         <label class="${gates[g.k]==='no'?'on':''}"><input type="radio" name="${g.k}" value="no">沒有</label>
       </div></div>`).join("") + navHtml();
   } else if(page==="nums"){
-    h = stageHead("nums") + `<h2>幾個數字</h2>
+    h = stageHead("nums") + `<h2>幾個數字${supBadge("nums")}</h2>
       <p>這一頁的數字是為了幫你估算遺產稅，以及退休後需要準備多少錢，讓報告更貼近你的情況。填大概數字即可，單位是萬元。</p>
-      <p class="hint">全部選填，不想填可以直接按「下一步」。</p>` +
+      <p class="hint">全部選填，不想填可以直接按「下一步」。填了任何一個數字，就拿到藏寶箱。</p>` +
       ["資產","退休"].map(g=>`<div class="numgrp"><h3>${g}</h3>` + NUMS.filter(n=>n.g===g).map(n=>
         `<label class="num"><span>${n.t}</span><input type="number" inputmode="decimal" min="0" step="any" data-num="${n.k}" value="${nums[n.k]??""}"><em>${n.u}</em></label>`).join("") + `</div>`).join("") + navHtml();
   } else if(page==="wish"){
@@ -351,7 +378,7 @@ function render(){
     const body = GROUPS[page]
       ? GROUPS[page].map(g=>`<div class="numgrp"><h3>${g.h}</h3>` + g.ids.map(id=>opt(ITEMS[page].find(x=>x.id===id))).join("") + `</div>`).join("")
       : ITEMS[page].map(opt).join("");
-    h = stageHead(page) + `<h2>${head}</h2><p class="hint">勾選符合你的項目；都不符合的話，直接按「下一步」。</p>` + body + navHtml();
+    h = stageHead(page) + `<h2>${head}${supBadge(page)}</h2><p class="hint">勾選符合你的項目，每勾一項就拿到一個${SUP[page].n}；都不符合的話，直接按「下一步」。</p>` + body + navHtml();
   }
   $("#card").innerHTML = h + `<div class="err" id="err"></div>`;
   window.scrollTo(0,0);
@@ -388,12 +415,13 @@ function ac(){
   return actx;
 }
 /* LINE 等 App 內建瀏覽器（iOS WKWebView）會把網頁合成聲音當成鈴聲處理，
-   先播一段無聲的 <audio>，把聲音切到「媒體播放」模式 */
+   先播一段無聲的 <audio>，把聲音切到「媒體播放」模式。
+   無聲檔要有實際長度（0.5 秒）：長度為零的檔案設成重複播放，瀏覽器會不停重播，整個網頁卡住 */
 let mediaUnlocked=false;
 function unlockMedia(){
   if(mediaUnlocked) return; mediaUnlocked=true;
   try{
-    const a=new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=");
+    const a=new Audio("data:audio/wav;base64,UklGRsQPAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YaAPAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA");
     a.loop=true; a.setAttribute("playsinline",""); a.volume=0.01; const p=a.play(); if(p&&p.catch) p.catch(()=>{ mediaUnlocked=false; });
   }catch(e){ mediaUnlocked=false; }
 }
@@ -469,11 +497,25 @@ function navHtml(){
 
 document.addEventListener("input",e=>{
   const el = e.target;
-  if(el.dataset && el.dataset.num){ const v=el.value.trim(); if(v===""||isNaN(+v)||+v<0) delete nums[el.dataset.num]; else nums[el.dataset.num]=+v; }
+  if(el.dataset && el.dataset.num){
+    const had = supCount("nums");
+    const v=el.value.trim(); if(v===""||isNaN(+v)||+v<0) delete nums[el.dataset.num]; else nums[el.dataset.num]=+v;
+    if(supCount("nums")!==had) gotSupply(had ? null : el.closest(".num"));
+  }
 });
+/* 拿到物資：標題旁的數量更新，勾選的那一格跳出 +1、+2⋯⋯ */
+function gotSupply(at){
+  const pg = pages()[step], b = $("#sup"); if(!SUP[pg] || !b) return;
+  const n = supCount(pg);
+  b.innerHTML = `${SUP[pg].svg}${SUP[pg].n} ×${n}`;
+  if(!at) return;
+  b.classList.remove("bump"); void b.offsetWidth; b.classList.add("bump");
+  const p = document.createElement("span"); p.className = "plus"; p.textContent = "+" + n;
+  at.appendChild(p); setTimeout(()=>p.remove(), 900);
+}
 document.addEventListener("change",e=>{
   const el = e.target;
-  if(el.type==="checkbox"){ el.checked?checked.add(el.value):checked.delete(el.value); el.closest(".opt").classList.toggle("on",el.checked); sfx.tick(el.checked); }
+  if(el.type==="checkbox"){ el.checked?checked.add(el.value):checked.delete(el.value); el.closest(".opt").classList.toggle("on",el.checked); sfx.tick(el.checked); gotSupply(el.checked ? el.closest(".opt") : null); }
   if(el.type==="radio"){
     gates[el.name]=el.value; sfx.tick(el.value==="yes");
     if(el.value==="no") ITEMS[el.name].forEach(x=>checked.delete(x.id));
@@ -554,7 +596,7 @@ function report(){
   if(derived().has("A9")) ins = ins.filter(s=>s!=="預留一筆現金讓家人繳遺產稅");
   ins = uniq(ins);
   /* 指定受益人的子句只留第一句，避免重複 */
-  let seenBen=false; ins = ins.filter(s=>{ if(!s.startsWith("指定受益人")) return true; if(seenBen) return false; seenBen=true; return true; });
+  let seenBen=false; ins = ins.filter(s=>{ if(!s.startsWith("寫明保險金給")) return true; if(seenBen) return false; seenBen=true; return true; });
   const trust = uniq(sel.map(x=>pick(x,"trust")).filter(Boolean));
   const care = derived().has("11");
   const other = uniq(order.map(x=>x.other).filter(Boolean)).slice(0,4);
@@ -563,11 +605,11 @@ function report(){
   if(top.length) ps.push("依你的情況，" + top.map(x=>x.short).join("，") + "。");
   else ps.push("依你的勾選，目前沒有需要特別處理的情況。");
   numParas().forEach(s=>ps.push(s));
-  if(will.length) ps.push("遺囑可以" + joinCan(will) + "。不過每位繼承人都有法律保障的最低份額（特留分），分配時不能低於這個份額。");
+  if(will.length) ps.push("遺囑可以" + joinCan(will) + "。不過法律保障每位繼承人至少拿到一定比例（特留分），遺囑分配時不能低於這個比例。");
   if(ins.length) ps.push("保單可以" + joinCan(ins) + "。");
   if(trust.length || care){
     let s = trust.length ? "信託可以" + joinCan(trust) + "。" : "";
-    if(care) s += (s?"":"") + "擔心失能或失智的話，可以用意定監護先選定監護人，照顧費用由安養信託按月支付。";
+    if(care) s += (s?"":"") + "擔心失能或失智的話，可以趁現在先指定將來照顧你的人（意定監護），照顧費用交給信託按月支付。";
     ps.push(s);
   }
   if(other.length) ps.push("另外，" + other.join("；") + "。");
@@ -594,6 +636,13 @@ function celebrate(){
   a.innerHTML=`抵達終點！<small>來看看你的航程</small>`;
   document.body.appendChild(a); setTimeout(()=>a.remove(),2700);
 }
+function bagHtml(){
+  const got = ["p1","p2","A","B","C","D","nums"].map(k=>[k,supCount(k)]).filter(([,n])=>n>0);
+  if(!got.length) return "";
+  return `<div class="bag"><h3>這趟收集到的出航物資</h3><div class="its">` +
+    got.map(([k,n])=>`<span>${SUP[k].svg}${SUP[k].n} ×${n}</span>`).join("") +
+    `</div><p>物資越多，越該快點啟航。</p></div>`;
+}
 function showResult(){
   const r = report();
   $("#map").innerHTML = mapHtml(pages().length-1, pages().length);
@@ -606,6 +655,7 @@ function showResult(){
       <div class="by">陳品攸律師・王春雄顧問・吳翊辰地政士</div>
     </div>
     <p class="shot">可以截圖這張卡片分享</p>
+    ${bagHtml()}
     ${r.ps.map(p=>`<p>${esc(p)}</p>`).join("")}
     <p class="hook">${r.hook}</p>
     <a class="cta" href="${BOOKING_URL}" target="_blank" rel="noopener">預約諮詢</a>
