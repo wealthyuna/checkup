@@ -164,7 +164,7 @@ const GATES = [
   {k:"C",q:"有保單嗎？"},
   {k:"D",q:"你或家人有海外資產或跨國身分嗎？"}
 ];
-const TEAM = `<div class="team"><b>共同設計</b><span>律師　陳品攸</span><span>地政士　吳翊辰</span><span>國際認證高級理財規劃顧問　王春雄</span></div>`;
+const TEAM = `<div class="team"><b>共同設計</b><span>律師　陳品攸</span><span>CFP理財規劃顧問　王春雄</span><span>地政士　吳翊辰</span></div>`;
 const TITLES = {A:"不動產",B:"公司與事業",C:"保單",D:"海外與跨國"};
 const LEVEL_LINE = {
   "高":"你的家庭和資產情況比較複雜，建議現在就開始規劃。",
@@ -189,9 +189,9 @@ function render(){
   let h = "";
   if(page==="intro"){
     h = `<div class="hero"><h1>財富傳承健檢</h1></div>
-      <p>財富傳承適不適合你，跟資產多少沒有直接關係，更重要的是你的家庭結構和財產狀況。</p>
+      <p>財富傳承，這個詞你聽了很多次，還是不知道適不適合你、該如何進行嗎？其實，究竟要不要規劃財富傳承，跟你的資產多少沒有直接關係，更重要的是你的家庭結構和財產狀況，跟著這份問卷，一步一步填答，讓你初步窺知財富傳承的全貌。</p>
       <p>這份問卷由律師、地政士、理財顧問一起整理，勾選符合你的情況，大約 5 分鐘，就能知道自己的現況、是否應該及早開始規劃以及適合用哪些工具。</p>
-      <p class="hint">填完留下聯絡方式，就能看到結果。</p>
+      <p class="hint">填答完畢，留下聯絡方式，就可以獲得一份簡短報告。</p>
       <div class="nav"><button class="primary" data-go="next">開始</button></div>
       ${TEAM}`;
   } else if(page==="gates"){
