@@ -381,7 +381,7 @@ const sfx = {
   pass(){ if(!soundOn) return; tone(784,0,0.25,"triangle",0.06); tone(1047,0.13,0.35,"triangle",0.06); },
   arrive(){ if(!soundOn) return; [523,659,784,1047].forEach((f,i)=>tone(f,i*0.11,0.3,"triangle",0.06)); tone(1319,0.46,0.7,"sine",0.05); }
 };
-/* 背景音樂：只有海浪聲（她 10/18 說海浪聲就好），即時合成；按「出發」才開始 */
+/* 背景音樂：海浪聲＋偶爾海鷗（她 10/18 選），即時合成；按「出發」才開始 */
 let music = null;
 function startMusic(){
   const c=ac(); if(!c || music) return;
@@ -395,6 +395,20 @@ function startMusic(){
   const lfo=c.createOscillator(); lfo.frequency.value=0.13; const lg=c.createGain(); lg.gain.value=0.011;
   lfo.connect(lg); lg.connect(wg.gain);
   noise.connect(lp); lp.connect(wg); wg.connect(master); noise.start(); lfo.start();
+  // 海鷗：每 15～25 秒隨機叫一到三聲（合成，先試聽）
+  function gull(at){
+    const o=c.createOscillator(), f=c.createBiquadFilter(), g=c.createGain();
+    o.type="sawtooth"; f.type="bandpass"; f.frequency.value=1500; f.Q.value=4;
+    const vib=c.createOscillator(), vg=c.createGain(); vib.frequency.value=28; vg.gain.value=40; vib.connect(vg); vg.connect(o.frequency);
+    o.frequency.setValueAtTime(1250,at); o.frequency.linearRampToValueAtTime(1750,at+0.08); o.frequency.exponentialRampToValueAtTime(820,at+0.42);
+    g.gain.setValueAtTime(0.0001,at); g.gain.exponentialRampToValueAtTime(0.018,at+0.04); g.gain.exponentialRampToValueAtTime(0.0001,at+0.45);
+    o.connect(f); f.connect(g); g.connect(master); o.start(at); vib.start(at); o.stop(at+0.5); vib.stop(at+0.5);
+  }
+  function gullLoop(){
+    if(!document.hidden && soundOn){ const n=1+Math.floor(Math.random()*3), t0=c.currentTime+0.05; for(let i=0;i<n;i++) gull(t0+i*0.32); }
+    setTimeout(gullLoop, 15000+Math.random()*10000);
+  }
+  setTimeout(gullLoop, 4000);
   music={master};
 }
 function musicVolume(){ if(music && actx) music.master.gain.setTargetAtTime(soundOn?1:0, actx.currentTime, 0.05); }
