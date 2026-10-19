@@ -325,6 +325,7 @@ const NUMS = [
   {g:"資產",k:"asset",t:"名下資產合計",u:"萬"},
   {g:"資產",k:"realty",t:"其中不動產",u:"萬"},
   {g:"資產",k:"debt",t:"負債合計（房貸、信貸、借款）",u:"萬"},
+  {g:"退休",k:"age",t:"現在幾歲",u:"歲"},
   {g:"退休",k:"retAge",t:"預計幾歲退休",u:"歲"},
   {g:"退休",k:"retSpend",t:"退休後每月生活費",u:"萬"},
   {g:"退休",k:"retIncome",t:"退休後每月固定收入（勞保年金、租金等）",u:"萬"}
@@ -575,13 +576,23 @@ function numParas(){
     if(nums.realty!==undefined && a>0 && nums.realty>=a/2) s += "資產以不動產為主，要預先準備繳稅的現金。";
     out.push(s);
   }
-  const {retAge,retSpend,retIncome}=nums;
+  const {age,retAge,retSpend,retIncome}=nums;
   if(retAge!==undefined && retSpend!==undefined && retIncome!==undefined){
-    const gap=Math.max(0,retSpend-retIncome), years=Math.max(0,90-retAge), need=gap*12*years;
+    // 已經過了預計退休年齡的，退休期間從現在算起
+    const start = (age!==undefined && age>retAge) ? age : retAge;
+    const gap=Math.max(0,retSpend-retIncome), years=Math.max(0,90-start), need=gap*12*years;
+    const left = age!==undefined ? retAge-age : 0; // 距離退休還有幾年
+    const fmt1 = n=> n<10 ? (Math.round(n*10)/10).toLocaleString("zh-TW") : fmt(n);
     let s = gap>0 ? `退休後每月缺口約 ${(Math.round(gap*10)/10).toLocaleString("zh-TW")} 萬，以活到 90 歲計算，退休期間大約要準備 ${fmt(need)} 萬。`
                   : "依你填的數字，退休後每月固定收入足以支應生活費。";
     if(net!==null && gap>0){
-      s += (net-need>0) ? `你的淨資產扣掉這筆，大約 ${fmt(net-need)} 萬是可以規劃傳承的部分。` : "你的淨資產還不夠支應這筆退休準備，傳承規劃要先顧好退休生活。";
+      if(net-need>0) s += `你的淨資產扣掉這筆，大約 ${fmt(net-need)} 萬是可以規劃傳承的部分。`;
+      else {
+        s += "你的淨資產還不夠支應這筆退休準備，傳承規劃要先顧好退休生活。";
+        if(left>0) s += `還差約 ${fmt(need-net)} 萬，距離退休還有 ${left} 年，平均每年要多存約 ${fmt1((need-net)/left)} 萬。`;
+      }
+    } else if(gap>0 && left>0){
+      s += `距離退休還有 ${left} 年，平均每年要存約 ${fmt1(need/left)} 萬。`;
     }
     s += "（沒有計入通膨和投資報酬，實際金額可以請理財規劃顧問細算。）";
     out.push(s);
