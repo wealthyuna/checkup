@@ -151,7 +151,7 @@ button{font:inherit;border:0;border-radius:10px;padding:13px 18px;cursor:pointer
 <script>
 /* 設定：Tally 表單 ID 還沒建，空字串時直接顯示結果（測試用） */
 const TALLY_FORM_ID = "RWKgRP";
-const LINE_URL = "https://line.me/R/ti/p/@057fwfkd"; /* 2026-10-23 結果頁改導 LINE 官方帳號，填完問卷送 30 分鐘免費諮詢 */
+const LINE_URL = "https://line.me/R/ti/p/@057fwfkd"; /* 2026-10-27 結果頁導 LINE 官方帳號，傳「航海圖」領專講簡報（原本的 30 分鐘免費諮詢拿掉） */
 
 /* 題目。short＝綜合句用的情況短語；will/ins/trust/other＝各工具句的子句；c＝複雜情況 */
 const ITEMS = {
@@ -364,7 +364,7 @@ function render(){
       </div>
       <p>財富傳承，這個詞你聽了很多次，卻還是不確定自己適不適合、又該從哪裡開始嗎？即使資產不多，也可能需要規劃財富傳承，關鍵在你的家庭結構和財產狀況。</p>
       <p>這份問卷由律師、地政士、理財規劃顧問一起整理。從家庭成員這座島出發，一關一關勾選符合你的情況，途中還有小知識，準備好啟程了嗎？</p>
-      <p class="hint">抵達終點後留下聯絡方式，就能拿到專屬你的財富傳承航海圖：你的現況、是否應該及早開始規劃，以及適合用哪些工具，還可以獲得一次 30 分鐘免費法律諮詢。</p>
+      <p class="hint">抵達終點後留下聯絡方式，就能拿到專屬你的財富傳承航海圖：你的現況、是否應該及早開始規劃，以及適合用哪些工具。</p>
       <div class="nav"><button class="primary" data-go="next">出發</button></div>
       ${TEAM}`;
   } else if(page==="gates"){
@@ -644,8 +644,8 @@ function report(){
   }
   if(other.length) ps.push("另外，" + other.join("；") + "。");
   const hook = (will.length||ins.length||trust.length||care)
-    ? "這些工具差在哪裡、怎麼搭配，要看你的資產和家人的狀況。加入 LINE 官方帳號，傳「航海圖」給我們，就能預約 30 分鐘免費法律諮詢。"
-    : "實際要怎麼安排，要看你的資產和家人的狀況。加入 LINE 官方帳號，傳「航海圖」給我們，就能預約 30 分鐘免費法律諮詢。";
+    ? "這些工具差在哪裡、怎麼搭配，要看你的資產和家人的狀況。加入 LINE 官方帳號，傳「航海圖」給我們，就能收到財富傳承專講的簡報。"
+    : "實際要怎麼安排，要看你的資產和家人的狀況。加入 LINE 官方帳號，傳「航海圖」給我們，就能收到財富傳承專講的簡報。";
   return {lv, ps, hook, sel};
 }
 
@@ -688,7 +688,7 @@ function showResult(){
     ${bagHtml()}
     ${r.ps.map(p=>`<p>${esc(p)}</p>`).join("")}
     <p class="hook">${r.hook}</p>
-    <a class="cta" href="${LINE_URL}" target="_blank" rel="noopener">加入 LINE 預約免費諮詢</a>
+    <a class="cta" href="${LINE_URL}" target="_blank" rel="noopener">加入 LINE 領取專講簡報</a>
     <p class="note">這份結果依你勾選的項目產生，是初步的方向，僅提供參考，完整的財富傳承安排仍須視個案實際情況而定</p>
     ${TEAM}
   </div>`;
