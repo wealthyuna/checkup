@@ -165,6 +165,22 @@ button{font:inherit;border:0;border-radius:10px;padding:13px 18px;cursor:pointer
 .gate .cp-form-submit:disabled{opacity:.6}
 .gate .cp-form-message{margin-top:8px;font-size:14px;color:#a3412b}
 .gate .cp-form-done{color:var(--navy);font-weight:700}
+.bk{margin:18px 0 8px;padding:20px 18px;background:#fffdfa;border:1px solid var(--line);border-radius:12px}
+.bk h3{margin:0 0 6px;color:var(--navy);font-size:19px}
+.bk .bkinfo{margin:0 0 12px;font-size:15px;color:var(--muted)}
+.bk .bkmsg{margin:0;padding:12px 14px;background:var(--cream);border-radius:8px;font-size:15px}
+.bk .bkday{margin:0 0 12px}
+.bk .bkdl{margin:0 0 6px;font-size:15px;font-weight:700}
+.bk .bkslots{display:flex;flex-wrap:wrap;gap:8px}
+.bk .bkslot{padding:8px 18px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--navy);font:inherit;font-size:15px;cursor:pointer}
+.bk .bkslot.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.bk .bkchosen{margin:14px 0 4px;color:var(--navy);font-weight:700}
+.bk .bklab{display:block;margin:12px 0 4px;font-size:15px;font-weight:700}
+.bk input[type=tel]{display:block;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:16px;background:#fff}
+.bk .bkmode{display:flex;gap:18px;font-size:15px}
+.bk .bkoffice{margin:6px 0 0;font-size:14px;color:var(--khaki)}
+.bk .cta{width:100%;border:0;cursor:pointer;font:inherit;margin-top:14px}
+.bk .bkdone{margin:0;padding:12px 14px;background:var(--cream);border-radius:8px;color:var(--navy);font-weight:700}
 </style>
 </head>
 <body>
@@ -180,10 +196,10 @@ const TALLY_FORM_ID = ""; /* 2026-11-25 不再用 Tally 收名單，填完直接
 const FORM_IDX = 1;
 const PRIVACY = `<p>陳品攸律師（以下稱本人）依個人資料保護法第八條規定，告知下列事項：</p>
 <p>一、蒐集目的：〇五四 法律服務、〇九〇 消費者、客戶管理與服務。您另勾選同意接收電子報及活動訊息者，並包括〇四〇 行銷。</p>
-<p>二、個人資料類別：辨識個人者（稱呼、電子郵件），以及您在本問卷勾選與填寫之內容（含自行填寫之資產、負債及退休相關金額）。</p>
+<p>二、個人資料類別：辨識個人者（稱呼、電子郵件，以及預約諮詢時提供之電話），以及您在本問卷勾選與填寫之內容（含自行填寫之資產、負債及退休相關金額）。</p>
 <p>三、利用之期間、地區、對象及方式：<br>（一）期間：自蒐集之日起至蒐集目的消失為止；依法令或執行律師業務有保存必要者，於必要期間內保存。<br>（二）地區：中華民國境內，以及本人網站系統與雲端服務之伺服器所在地。<br>（三）對象：本人。除法令另有規定或經您同意外，不提供予第三人。<br>（四）方式：於上述目的範圍內，以電子或紙本方式蒐集、處理及利用。</p>
 <p>四、您得依個人資料保護法第三條規定，就您的個人資料請求查詢、閱覽、製給複製本、補充或更正、停止蒐集、處理或利用，或請求刪除。請以電子郵件寄至 yuna@paxandsage.com 提出。</p>
-<p>五、您得自由選擇是否提供個人資料；未提供者，將無法取得完整報告。</p>
+<p>五、您得自由選擇是否提供個人資料；未提供者，將無法取得完整報告或完成預約。</p>
 <p>六、您同意接收電子報及活動訊息後，得隨時以電子報內之取消訂閱連結或來信表示拒絕，本人將停止寄送。</p>`;
 const BOOK_URL = "https://wealthyuna.com/consultation"; /* 2026-11-25 官網版：結果頁改導官網預約頁（專講簡報、LINE 都拿掉） */
 
@@ -722,7 +738,7 @@ function showResult(){
       <h3>留下稱呼和 Email，看完整報告</h3>
       <p>完整報告會依你勾選的情況，說明遺囑、保單、信託各能幫你做到什麼，以及其他要留意的事。</p>
       <details class="privacy"><summary>個人資料蒐集告知事項（送出前請閱讀）</summary><div>${PRIVACY}</div></details>
-      <label class="chk"><input type="checkbox" id="gAgree"><span>（必填）我已閱讀並瞭解個人資料蒐集告知事項，同意陳品攸律師為提供問卷結果及法律服務，蒐集、處理及利用我的個人資料。</span></label>
+      <label class="chk"><input type="checkbox" id="gAgree"><span>（必填）我已閱讀並瞭解個人資料蒐集告知事項，同意陳品攸律師為提供問卷結果、安排及提供法律諮詢，蒐集、處理及利用我的個人資料。</span></label>
       <label class="chk"><input type="checkbox" id="gSub"><span>（選填）我同意陳品攸律師以電子郵件寄送電子報，以及講座、活動訊息；我可以隨時取消。</span></label>
       <p class="gerr" id="gErr"></p>
       <div class="cp-form" data-form-idx="${FORM_IDX}"></div>
@@ -730,7 +746,22 @@ function showResult(){
     <div id="full" hidden>
       ${r.ps.map(p=>`<p>${esc(p)}</p>`).join("")}
       <p class="hook">${r.hook}</p>
-      <a class="cta" href="${BOOK_URL}">預約法律諮詢</a>
+      <div class="bk" id="bk">
+        <h3>預約法律諮詢</h3>
+        <p class="bkinfo">每次一小時，線上會議或至事務所面談。選好時段送出後，我會以 Email 回覆費用與付款方式，付款完成即預約成功。</p>
+        <div id="bkSlots"></div>
+        <div id="bkForm" hidden>
+          <p class="bkchosen" id="bkChosen"></p>
+          <label class="bklab" for="bkPhone">電話</label>
+          <input type="tel" id="bkPhone" maxlength="30">
+          <p class="bklab">諮詢方式</p>
+          <div class="bkmode"><label><input type="radio" name="bkMode" value="視訊" checked> 視訊</label><label><input type="radio" name="bkMode" value="事務所面談"> 事務所面談</label></div>
+          <p class="bkoffice" id="bkOffice" hidden>地點：104492 臺北市中山區松江路148號5樓（泰睿法律事務所）</p>
+          <button type="button" class="cta" id="bkSubmit">送出預約</button>
+          <p class="gerr" id="bkErr"></p>
+        </div>
+        <p class="bkdone" id="bkDone" hidden></p>
+      </div>
       <p class="note">這份結果依你勾選的項目產生，是初步的方向，僅提供參考，完整的財富傳承安排仍須視個案實際情況而定</p>
     </div>
     ${TEAM}
@@ -747,9 +778,63 @@ function summaryText(r){
     "勾選項目：", r.sel.map(x=>"・"+x.id+" "+x.t).join("\n") || "（無）",
     "數字：" + (NUMS.filter(n=>nums[n.k]!==undefined).map(n=>n.t+" "+nums[n.k]+n.u).join("；") || "（未填）"),
     "最想先處理的事：" + (wish || "（未填）"),
+    "來源：" + (new URLSearchParams(location.search).get("from") || "官網或直接開啟"),
     "【個資告知】已勾選同意（" + new Date().toLocaleString("zh-TW",{timeZone:"Asia/Taipei",hour12:false}) + "）",
-    "【電子報與活動訊息】" + ($("#gSub").checked ? "同意訂閱" : "未勾選，不可寄行銷訊息")
+    "【電子報與活動訊息】" + (($("#gSub") ? $("#gSub").checked : $("#gate").dataset.s==="1") ? "同意訂閱" : "未勾選，不可寄行銷訊息")
   ].join("\n");
+}
+
+/* 2026-11-25 結果頁直接預約：跟官網預約頁共用同一支 Apps Script（同一套時段與 704 日曆） */
+const BOOK_API = "https://script.google.com/macros/s/AKfycbwJ0_RdyDfkUYvN8zih4bJGDkioQE026HqsOYszDUP2exVkiTSpXb_d2l4fb18KzGz2iQ/exec";
+const WD = ["日","一","二","三","四","五","六"];
+const dayLabel = ds=>{ const d=new Date(ds+"T12:00:00+08:00"); return (d.getMonth()+1)+" 月 "+d.getDate()+" 日（週"+WD[d.getDay()]+"）"; };
+function setupBooking(r){
+  const box=$("#bkSlots"), form=$("#bkForm"); let chosen=null;
+  const load=()=>{
+    box.innerHTML='<p class="bkmsg">正在讀取可預約的時段⋯⋯</p>';
+    fetch(BOOK_API).then(x=>x.json()).then(res=>{
+      if(!res.ok){ box.innerHTML='<p class="bkmsg">'+esc(res.error||"暫時讀不到時段，請稍後再試。")+'</p>'; return; }
+      if(!res.slots.length){ box.innerHTML='<p class="bkmsg">本月目前沒有可預約的時段，下個月 1 日會開放新的時段。</p>'; form.hidden=true; return; }
+      const byDay={}, order=[];
+      res.slots.forEach(s=>{ if(!byDay[s.date]){byDay[s.date]=[];order.push(s.date);} byDay[s.date].push(s); });
+      box.innerHTML="";
+      order.forEach(ds=>{
+        const wrap=document.createElement("div"); wrap.className="bkday";
+        wrap.innerHTML='<p class="bkdl">'+dayLabel(ds)+'</p>';
+        const row=document.createElement("div"); row.className="bkslots";
+        byDay[ds].forEach(s=>{
+          const b=document.createElement("button"); b.type="button"; b.className="bkslot"; b.textContent=s.time;
+          b.addEventListener("click",()=>{
+            box.querySelectorAll(".bkslot").forEach(x=>x.classList.remove("on")); b.classList.add("on"); chosen=s;
+            $("#bkChosen").textContent="已選："+dayLabel(s.date)+" "+s.time; form.hidden=false;
+          });
+          row.appendChild(b);
+        });
+        wrap.appendChild(row); box.appendChild(wrap);
+      });
+    }).catch(()=>{ box.innerHTML='<p class="bkmsg">暫時讀不到時段，請稍後再試。</p>'; });
+  };
+  document.querySelectorAll('input[name=bkMode]').forEach(x=>x.addEventListener("change",()=>{
+    $("#bkOffice").hidden = document.querySelector('input[name=bkMode]:checked').value!=="事務所面談";
+  }));
+  $("#bkSubmit").addEventListener("click",()=>{
+    const err=$("#bkErr"); err.textContent="";
+    const gate=$("#gate"), phone=$("#bkPhone").value.trim(), mode=document.querySelector('input[name=bkMode]:checked').value;
+    if(!chosen){ err.textContent="請先選一個時段。"; return; }
+    if(!phone){ err.textContent="請填寫電話。"; return; }
+    const data={start:chosen.start, name:gate.dataset.n||"", email:gate.dataset.e||"", phone, mode, category:"財富傳承",
+      description:("（來自財富傳承航海圖）\n"+summaryText(r)).slice(0,1990), website:""};
+    const btn=$("#bkSubmit"); btn.disabled=true; btn.textContent="送出中⋯⋯";
+    fetch(BOOK_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)})
+      .then(x=>x.json()).then(res=>{
+        btn.disabled=false; btn.textContent="送出預約";
+        if(!res.ok){ err.textContent=res.error||"送出失敗，請稍後再試。"; if(/被預約/.test(res.error||"")) load(); return; }
+        box.hidden=true; form.hidden=true;
+        const done=$("#bkDone"); done.hidden=false;
+        done.textContent="已收到你的預約："+dayLabel(chosen.date)+" "+chosen.time+"（"+mode+"）。我會以 Email 回覆費用與付款方式，付款完成即預約成功。";
+      }).catch(()=>{ btn.disabled=false; btn.textContent="送出預約"; err.textContent="送出失敗，請稍後再試。"; });
+  });
+  load();
 }
 function setupGate(r){
   const gate = $("#gate");
@@ -765,14 +850,14 @@ function setupGate(r){
     if(ta) ta.value = summaryText(r);
     const n = gate.querySelector('[name="answers[1]"]'), e = gate.querySelector('[name="answers[2]"]');
     gate.dataset.n = n ? n.value.trim() : ""; gate.dataset.e = e ? e.value.trim() : "";
+    gate.dataset.s = $("#gSub").checked ? "1" : "0";
   }, true);
   new MutationObserver((m,obs)=>{
     if(gate.querySelector(".cp-form-done")){
       obs.disconnect();
-      /* 同網域帶到預約頁，不用再填一次稱呼和 Email（存在瀏覽器分頁的 sessionStorage，不放網址） */
-      try{ sessionStorage.setItem("wyPrefill", JSON.stringify({name:gate.dataset.n||"", email:gate.dataset.e||"", cat:"財富傳承", lv:r.lv+"（"+TYPE[r.lv].name+"）", agreed:true, sub:!!($("#gSub")&&$("#gSub").checked)})); }catch(e){}
       gate.querySelectorAll("details,.chk,.gerr").forEach(e=>e.remove());
       $("#full").hidden = false;
+      setupBooking(r);
       $("#full").scrollIntoView({behavior:"smooth",block:"start"});
     }
   }).observe(gate,{childList:true,subtree:true});
