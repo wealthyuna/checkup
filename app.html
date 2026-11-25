@@ -770,7 +770,7 @@ function setupGate(r){
     if(gate.querySelector(".cp-form-done")){
       obs.disconnect();
       /* 同網域帶到預約頁，不用再填一次稱呼和 Email（存在瀏覽器分頁的 sessionStorage，不放網址） */
-      try{ sessionStorage.setItem("wyPrefill", JSON.stringify({name:gate.dataset.n||"", email:gate.dataset.e||"", cat:"財富傳承", lv:r.lv+"（"+TYPE[r.lv].name+"）"})); }catch(e){}
+      try{ sessionStorage.setItem("wyPrefill", JSON.stringify({name:gate.dataset.n||"", email:gate.dataset.e||"", cat:"財富傳承", lv:r.lv+"（"+TYPE[r.lv].name+"）", agreed:true, sub:!!($("#gSub")&&$("#gSub").checked)})); }catch(e){}
       gate.querySelectorAll("details,.chk,.gerr").forEach(e=>e.remove());
       $("#full").hidden = false;
       $("#full").scrollIntoView({behavior:"smooth",block:"start"});
