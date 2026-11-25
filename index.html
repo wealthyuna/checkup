@@ -643,9 +643,7 @@ function report(){
     ps.push(s);
   }
   if(other.length) ps.push("另外，" + other.join("；") + "。");
-  const hook = (will.length||ins.length||trust.length||care)
-    ? "這些工具差在哪裡、怎麼搭配，要看你的資產和家人的狀況，這部分可以預約諮詢當面討論。"
-    : "實際要怎麼安排，要看你的資產和家人的狀況，這部分可以預約諮詢當面討論。";
+  const hook = "該從哪裡開始、適合哪些傳承工具、成本及效果如何，歡迎預約諮詢，由我為你評估。";
   return {lv, ps, hook, sel};
 }
 
