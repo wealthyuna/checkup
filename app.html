@@ -730,7 +730,7 @@ function showResult(){
     <div id="full" hidden>
       ${r.ps.map(p=>`<p>${esc(p)}</p>`).join("")}
       <p class="hook">${r.hook}</p>
-      <a class="cta" href="${BOOK_URL}" target="_blank" rel="noopener">預約法律諮詢</a>
+      <a class="cta" href="${BOOK_URL}">預約法律諮詢</a>
       <p class="note">這份結果依你勾選的項目產生，是初步的方向，僅提供參考，完整的財富傳承安排仍須視個案實際情況而定</p>
     </div>
     ${TEAM}
@@ -763,10 +763,14 @@ function setupGate(r){
     }
     const ta = gate.querySelector('[name="answers[3]"]');
     if(ta) ta.value = summaryText(r);
+    const n = gate.querySelector('[name="answers[1]"]'), e = gate.querySelector('[name="answers[2]"]');
+    gate.dataset.n = n ? n.value.trim() : ""; gate.dataset.e = e ? e.value.trim() : "";
   }, true);
   new MutationObserver((m,obs)=>{
     if(gate.querySelector(".cp-form-done")){
       obs.disconnect();
+      /* 同網域帶到預約頁，不用再填一次稱呼和 Email（存在瀏覽器分頁的 sessionStorage，不放網址） */
+      try{ sessionStorage.setItem("wyPrefill", JSON.stringify({name:gate.dataset.n||"", email:gate.dataset.e||"", cat:"財富傳承", lv:r.lv+"（"+TYPE[r.lv].name+"）"})); }catch(e){}
       gate.querySelectorAll("details,.chk,.gerr").forEach(e=>e.remove());
       $("#full").hidden = false;
       $("#full").scrollIntoView({behavior:"smooth",block:"start"});
